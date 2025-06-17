@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Reptitrack App</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>reptitrack_app</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.244509611977-eajlct91tl8e06rvni6jr80uqnj37d3o</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>244509611977-blho2lnc7v40finbk9151msmgdko76ih.apps.googleusercontent.com</string>
+	<!-- Apple Sign-in -->
+	<key>CFBundleIdentifier</key>
+	<string>com.example.reptitrackApp</string>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+	<string>Default</string>
+
+	<!-- 通知権限の設定 -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>ReptiTrackは、ペットのお世話時間をリマインドするために通知を使用します。</string>
+
+    <!-- 英語版の説明 -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>ReptiTrack uses notifications to remind you about your pet care schedules.</string>
+
+    <!-- バックグラウンド実行モード -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>background-processing</string>
+        <string>background-fetch</string>
+        <string>remote-notification</string>
+    </array>
+
+    <!-- アプリがバックグラウンドで動作することを許可 -->
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.example.reptitrack-app.notification-check</string>
+    </array>
+
+    <!-- 通知カテゴリ設定 -->
+    <key>UNUserNotificationCenterCategories</key>
+    <array>
+        <dict>
+            <key>UNNotificationCategoryIdentifier</key>
+            <string>REPTITRACK_CARE_REMINDER</string>
+            <key>UNNotificationCategoryOptions</key>
+            <array>
+                <string>UNNotificationCategoryOptionCustomDismissAction</string>
+            </array>
+            <key>UNNotificationCategoryActions</key>
+            <array>
+                <dict>
+                    <key>UNNotificationActionIdentifier</key>
+                    <string>MARK_COMPLETE</string>
+                    <key>UNNotificationActionTitle</key>
+                    <string>完了</string>
+                    <key>UNNotificationActionOptions</key>
+                    <array>
+                        <string>UNNotificationActionOptionForeground</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>UNNotificationActionIdentifier</key>
+                    <string>SNOOZE_REMINDER</string>
+                    <key>UNNotificationActionTitle</key>
+                    <string>10分後に再通知</string>
+                </dict>
+            </array>
+        </dict>
+	</array>
+</dict>
+</plist>

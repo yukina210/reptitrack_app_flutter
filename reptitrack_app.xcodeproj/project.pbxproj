@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		45F40A612DACB2FC00AB8310 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 45F40A602DACB2FC00AB8310 /* FirebaseAnalytics */; };
+		465D43FFED9899A7CFBEBC23 /* Pods_reptitrack_app_reptitrack_appUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA6848E28CCEE0C4896C6731 /* Pods_reptitrack_app_reptitrack_appUITests.framework */; };
+		49F06D366BB7DE6619B9AF33 /* Pods_reptitrack_appTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA3B9E44F5AE115FCBB59C0B /* Pods_reptitrack_appTests.framework */; };
+		C79AB8F3F0F97EFD8398F7D5 /* Pods_reptitrack_app.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 798E4284590C3B763B48B976 /* Pods_reptitrack_app.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		45F40A412DAB7B9200AB8310 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,24 +31,39 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20989EF03F66548BB87FFFFD /* Pods-reptitrack_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_app.debug.xcconfig"; path = "Target Support Files/Pods-reptitrack_app/Pods-reptitrack_app.debug.xcconfig"; sourceTree = "<group>"; };
+		303E4D143BA511F33CDD0962 /* Pods-reptitrack_appTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_appTests.release.xcconfig"; path = "Target Support Files/Pods-reptitrack_appTests/Pods-reptitrack_appTests.release.xcconfig"; sourceTree = "<group>"; };
+		41CF1617A90FD44AD6629B31 /* Pods-reptitrack_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_app.release.xcconfig"; path = "Target Support Files/Pods-reptitrack_app/Pods-reptitrack_app.release.xcconfig"; sourceTree = "<group>"; };
 		45F40A332DAB7B9100AB8310 /* reptitrack_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reptitrack_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		45F40A402DAB7B9200AB8310 /* reptitrack_appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reptitrack_appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45F40A4A2DAB7B9200AB8310 /* reptitrack_appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reptitrack_appUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		798E4284590C3B763B48B976 /* Pods_reptitrack_app.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reptitrack_app.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C8A803944D27E7C2725348E /* Pods-reptitrack_app-reptitrack_appUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_app-reptitrack_appUITests.release.xcconfig"; path = "Target Support Files/Pods-reptitrack_app-reptitrack_appUITests/Pods-reptitrack_app-reptitrack_appUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BA6848E28CCEE0C4896C6731 /* Pods_reptitrack_app_reptitrack_appUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reptitrack_app_reptitrack_appUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD4976ACAA1275E6523E263D /* Pods-reptitrack_appTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_appTests.debug.xcconfig"; path = "Target Support Files/Pods-reptitrack_appTests/Pods-reptitrack_appTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E44A1CEFC09D9F9647D54272 /* Pods-reptitrack_app-reptitrack_appUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-reptitrack_app-reptitrack_appUITests.debug.xcconfig"; path = "Target Support Files/Pods-reptitrack_app-reptitrack_appUITests/Pods-reptitrack_app-reptitrack_appUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		EA3B9E44F5AE115FCBB59C0B /* Pods_reptitrack_appTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_reptitrack_appTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		45F40A352DAB7B9100AB8310 /* reptitrack_app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = reptitrack_app;
 			sourceTree = "<group>";
 		};
 		45F40A432DAB7B9200AB8310 /* reptitrack_appTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = reptitrack_appTests;
 			sourceTree = "<group>";
 		};
 		45F40A4D2DAB7B9200AB8310 /* reptitrack_appUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = reptitrack_appUITests;
 			sourceTree = "<group>";
 		};
@@ -52,6 +74,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45F40A612DACB2FC00AB8310 /* FirebaseAnalytics in Frameworks */,
+				C79AB8F3F0F97EFD8398F7D5 /* Pods_reptitrack_app.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49F06D366BB7DE6619B9AF33 /* Pods_reptitrack_appTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465D43FFED9899A7CFBEBC23 /* Pods_reptitrack_app_reptitrack_appUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +105,8 @@
 				45F40A432DAB7B9200AB8310 /* reptitrack_appTests */,
 				45F40A4D2DAB7B9200AB8310 /* reptitrack_appUITests */,
 				45F40A342DAB7B9100AB8310 /* Products */,
+				AACF4C7C3B1A0D736CBB8BA9 /* Pods */,
+				D758F745858DC9F6C806338C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +120,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AACF4C7C3B1A0D736CBB8BA9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				20989EF03F66548BB87FFFFD /* Pods-reptitrack_app.debug.xcconfig */,
+				41CF1617A90FD44AD6629B31 /* Pods-reptitrack_app.release.xcconfig */,
+				E44A1CEFC09D9F9647D54272 /* Pods-reptitrack_app-reptitrack_appUITests.debug.xcconfig */,
+				9C8A803944D27E7C2725348E /* Pods-reptitrack_app-reptitrack_appUITests.release.xcconfig */,
+				DD4976ACAA1275E6523E263D /* Pods-reptitrack_appTests.debug.xcconfig */,
+				303E4D143BA511F33CDD0962 /* Pods-reptitrack_appTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D758F745858DC9F6C806338C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				798E4284590C3B763B48B976 /* Pods_reptitrack_app.framework */,
+				BA6848E28CCEE0C4896C6731 /* Pods_reptitrack_app_reptitrack_appUITests.framework */,
+				EA3B9E44F5AE115FCBB59C0B /* Pods_reptitrack_appTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -99,9 +150,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45F40A542DAB7B9200AB8310 /* Build configuration list for PBXNativeTarget "reptitrack_app" */;
 			buildPhases = (
+				F54775D679CB598C25E85B34 /* [CP] Check Pods Manifest.lock */,
 				45F40A2F2DAB7B9100AB8310 /* Sources */,
 				45F40A302DAB7B9100AB8310 /* Frameworks */,
 				45F40A312DAB7B9100AB8310 /* Resources */,
+				F2B272B9B7A4B3C4852DB040 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,6 +165,7 @@
 			);
 			name = reptitrack_app;
 			packageProductDependencies = (
+				45F40A602DACB2FC00AB8310 /* FirebaseAnalytics */,
 			);
 			productName = reptitrack_app;
 			productReference = 45F40A332DAB7B9100AB8310 /* reptitrack_app.app */;
@@ -121,6 +175,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45F40A572DAB7B9200AB8310 /* Build configuration list for PBXNativeTarget "reptitrack_appTests" */;
 			buildPhases = (
+				DD84751E8525CEEF994CC0B8 /* [CP] Check Pods Manifest.lock */,
 				45F40A3C2DAB7B9200AB8310 /* Sources */,
 				45F40A3D2DAB7B9200AB8310 /* Frameworks */,
 				45F40A3E2DAB7B9200AB8310 /* Resources */,
@@ -134,8 +189,6 @@
 				45F40A432DAB7B9200AB8310 /* reptitrack_appTests */,
 			);
 			name = reptitrack_appTests;
-			packageProductDependencies = (
-			);
 			productName = reptitrack_appTests;
 			productReference = 45F40A402DAB7B9200AB8310 /* reptitrack_appTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -144,9 +197,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45F40A5A2DAB7B9200AB8310 /* Build configuration list for PBXNativeTarget "reptitrack_appUITests" */;
 			buildPhases = (
+				EED8CC5AF09BAC5C0B3A5A53 /* [CP] Check Pods Manifest.lock */,
 				45F40A462DAB7B9200AB8310 /* Sources */,
 				45F40A472DAB7B9200AB8310 /* Frameworks */,
 				45F40A482DAB7B9200AB8310 /* Resources */,
+				4016931F5F8A3B4F80AD175F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -157,8 +212,6 @@
 				45F40A4D2DAB7B9200AB8310 /* reptitrack_appUITests */,
 			);
 			name = reptitrack_appUITests;
-			packageProductDependencies = (
-			);
 			productName = reptitrack_appUITests;
 			productReference = 45F40A4A2DAB7B9200AB8310 /* reptitrack_appUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -195,6 +248,9 @@
 			);
 			mainGroup = 45F40A2A2DAB7B9100AB8310;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				45F40A5F2DACB2FC00AB8310 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 45F40A342DAB7B9100AB8310 /* Products */;
 			projectDirPath = "";
@@ -230,6 +286,109 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4016931F5F8A3B4F80AD175F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app-reptitrack_appUITests/Pods-reptitrack_app-reptitrack_appUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app-reptitrack_appUITests/Pods-reptitrack_app-reptitrack_appUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app-reptitrack_appUITests/Pods-reptitrack_app-reptitrack_appUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DD84751E8525CEEF994CC0B8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-reptitrack_appTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EED8CC5AF09BAC5C0B3A5A53 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-reptitrack_app-reptitrack_appUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F2B272B9B7A4B3C4852DB040 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app/Pods-reptitrack_app-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app/Pods-reptitrack_app-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-reptitrack_app/Pods-reptitrack_app-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F54775D679CB598C25E85B34 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-reptitrack_app-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		45F40A2F2DAB7B9100AB8310 /* Sources */ = {
@@ -392,6 +551,7 @@
 		};
 		45F40A552DAB7B9200AB8310 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 20989EF03F66548BB87FFFFD /* Pods-reptitrack_app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -420,6 +580,7 @@
 		};
 		45F40A562DAB7B9200AB8310 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 41CF1617A90FD44AD6629B31 /* Pods-reptitrack_app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -448,6 +609,7 @@
 		};
 		45F40A582DAB7B9200AB8310 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD4976ACAA1275E6523E263D /* Pods-reptitrack_appTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -467,6 +629,7 @@
 		};
 		45F40A592DAB7B9200AB8310 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 303E4D143BA511F33CDD0962 /* Pods-reptitrack_appTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -486,6 +649,7 @@
 		};
 		45F40A5B2DAB7B9200AB8310 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E44A1CEFC09D9F9647D54272 /* Pods-reptitrack_app-reptitrack_appUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -503,6 +667,7 @@
 		};
 		45F40A5C2DAB7B9200AB8310 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C8A803944D27E7C2725348E /* Pods-reptitrack_app-reptitrack_appUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -558,6 +723,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		45F40A5F2DACB2FC00AB8310 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		45F40A602DACB2FC00AB8310 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45F40A5F2DACB2FC00AB8310 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 45F40A2B2DAB7B9100AB8310 /* Project object */;
 }

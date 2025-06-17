@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "244509611977",
+    "project_id": "reptitrack-app-637d8",
+    "storage_bucket": "reptitrack-app-637d8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244509611977:android:a0e76a812fe9dc83eb7a18",
+        "android_client_info": {
+          "package_name": "com.example.reptitrack_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244509611977-blho2lnc7v40finbk9151msmgdko76ih.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.reptitrack_app",
+            "certificate_hash": "75b48449ec297208a9227349ff25b9d55a83d5fa"
+          }
+        },
+        {
+          "client_id": "244509611977-if0mpfei6erireppb41i6oqd3367vpuj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi3IlZeZTtWLlmik9OII5NSYpN0RQxVB0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244509611977-if0mpfei6erireppb41i6oqd3367vpuj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "244509611977-eajlct91tl8e06rvni6jr80uqnj37d3o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.reptitrackApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
