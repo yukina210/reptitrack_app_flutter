@@ -41,48 +41,123 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCVNVWHsr0rgiOfJ3FpzEOPwnmkUEssX2A',
-    appId: '1:244509611977:web:dc62799b42efa664eb7a18',
-    messagingSenderId: '244509611977',
-    projectId: 'reptitrack-app-637d8',
-    authDomain: 'reptitrack-app-637d8.firebaseapp.com',
-    storageBucket: 'reptitrack-app-637d8.firebasestorage.app',
-    measurementId: 'G-4D1KKBB7TN',
+    apiKey: String.fromEnvironment('FIREBASE_WEB_API_KEY', defaultValue: ''),
+    appId: String.fromEnvironment(
+      'FIREBASE_WEB_APP_ID',
+      defaultValue: '1:244509611977:web:dc62799b42efa664eb7a18',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '244509611977',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'reptitrack-app-637d8',
+    ),
+    authDomain: String.fromEnvironment(
+      'FIREBASE_AUTH_DOMAIN',
+      defaultValue: 'reptitrack-app-637d8.firebaseapp.com',
+    ),
+    storageBucket: String.fromEnvironment(
+      'FIREBASE_STORAGE_BUCKET',
+      defaultValue: 'reptitrack-app-637d8.firebasestorage.app',
+    ),
+    measurementId: String.fromEnvironment(
+      'FIREBASE_WEB_MEASUREMENT_ID',
+      defaultValue: 'G-4D1KKBB7TN',
+    ),
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCi3IlZeZTtWLlmik9OII5NSYpN0RQxVB0',
-    appId: '1:244509611977:android:a0e76a812fe9dc83eb7a18',
-    messagingSenderId: '244509611977',
-    projectId: 'reptitrack-app-637d8',
-    storageBucket: 'reptitrack-app-637d8.firebasestorage.app',
+    apiKey: String.fromEnvironment(
+      'FIREBASE_ANDROID_API_KEY',
+      defaultValue: '',
+    ),
+    appId: String.fromEnvironment(
+      'FIREBASE_ANDROID_APP_ID',
+      defaultValue: '1:244509611977:android:a0e76a812fe9dc83eb7a18',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '244509611977',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'reptitrack-app-637d8',
+    ),
+    storageBucket: String.fromEnvironment(
+      'FIREBASE_STORAGE_BUCKET',
+      defaultValue: 'reptitrack-app-637d8.firebasestorage.app',
+    ),
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDTBlB4eOA2gW-ZLBq4XwZ7LRItQNzZ8Wg',
-    appId: '1:244509611977:ios:0a74e8d2b531be8ceb7a18',
-    messagingSenderId: '244509611977',
-    projectId: 'reptitrack-app-637d8',
-    storageBucket: 'reptitrack-app-637d8.firebasestorage.app',
-    iosBundleId: 'com.example.reptitrackApp',
+    apiKey: String.fromEnvironment('FIREBASE_IOS_API_KEY', defaultValue: ''),
+    appId: String.fromEnvironment(
+      'FIREBASE_IOS_APP_ID',
+      defaultValue: '1:244509611977:ios:0a74e8d2b531be8ceb7a18',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '244509611977',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'reptitrack-app-637d8',
+    ),
+    storageBucket: String.fromEnvironment(
+      'FIREBASE_STORAGE_BUCKET',
+      defaultValue: 'reptitrack-app-637d8.firebasestorage.app',
+    ),
+    iosBundleId: String.fromEnvironment(
+      'IOS_BUNDLE_ID',
+      defaultValue: 'com.example.reptitrackApp',
+    ),
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDTBlB4eOA2gW-ZLBq4XwZ7LRItQNzZ8Wg',
-    appId: '1:244509611977:ios:0a74e8d2b531be8ceb7a18',
-    messagingSenderId: '244509611977',
-    projectId: 'reptitrack-app-637d8',
-    storageBucket: 'reptitrack-app-637d8.firebasestorage.app',
-    iosBundleId: 'com.example.reptitrackApp',
+    apiKey: String.fromEnvironment('FIREBASE_IOS_API_KEY', defaultValue: ''),
+    appId: String.fromEnvironment('FIREBASE_IOS_APP_ID', defaultValue: ''),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '',
+    ),
+    projectId: String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: ''),
+    storageBucket: String.fromEnvironment(
+      'FIREBASE_STORAGE_BUCKET',
+      defaultValue: '',
+    ),
+    iosBundleId: String.fromEnvironment(
+      'IOS_BUNDLE_ID',
+      defaultValue: 'com.example.reptitrackApp',
+    ),
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCVNVWHsr0rgiOfJ3FpzEOPwnmkUEssX2A',
-    appId: '1:244509611977:web:c17d6b32d36e9a76eb7a18',
-    messagingSenderId: '244509611977',
-    projectId: 'reptitrack-app-637d8',
-    authDomain: 'reptitrack-app-637d8.firebaseapp.com',
-    storageBucket: 'reptitrack-app-637d8.firebasestorage.app',
-    measurementId: 'G-TJXDMKFBM1',
+    apiKey: String.fromEnvironment('FIREBASE_WEB_API_KEY', defaultValue: ''),
+    appId: String.fromEnvironment(
+      'FIREBASE_WINDOWS_APP_ID',
+      defaultValue: '1:244509611977:web:c17d6b32d36e9a76eb7a18',
+    ),
+    messagingSenderId: String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+      defaultValue: '244509611977',
+    ),
+    projectId: String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'reptitrack-app-637d8',
+    ),
+    authDomain: String.fromEnvironment(
+      'FIREBASE_AUTH_DOMAIN',
+      defaultValue: 'reptitrack-app-637d8.firebaseapp.com',
+    ),
+    storageBucket: String.fromEnvironment(
+      'FIREBASE_STORAGE_BUCKET',
+      defaultValue: 'reptitrack-app-637d8.firebasestorage.app',
+    ),
+    measurementId: String.fromEnvironment(
+      'FIREBASE_WINDOWS_MEASUREMENT_ID',
+      defaultValue: 'G-TJXDMKFBM1',
+    ),
   );
 }

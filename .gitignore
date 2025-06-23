@@ -43,3 +43,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase設定ファイルをGitから除外
+lib/firebase_options.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+
+# 環境変数ファイル
+.env
+.env.local
+.env.development
+.env.production
+
+# API キーやシークレット
+**/secrets/
+**/*.key
+**/*.pem
+
+# Firebase関連
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+pubspec.lock
