@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/shared_models.dart';
-import '../models/pet.dart';
 
 class PetSharingService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
