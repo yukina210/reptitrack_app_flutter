@@ -103,16 +103,16 @@ class Pet {
     } else if (age.inDays < 365) {
       final months = (age.inDays / 30).floor();
       final days = age.inDays % 30;
-      return days > 0 ? '${months}ヶ月${days}日' : '${months}ヶ月';
+      return days > 0 ? '$monthsヶ月$days日' : '$monthsヶ月';
     } else {
       final years = (age.inDays / 365).floor();
       final remainingDays = age.inDays % 365;
       final months = (remainingDays / 30).floor();
 
       if (months > 0) {
-        return '${years}歳${months}ヶ月';
+        return '$years歳$monthsヶ月';
       } else {
-        return '${years}歳';
+        return '$years歳';
       }
     }
   }

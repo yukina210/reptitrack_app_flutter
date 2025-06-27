@@ -1,17 +1,15 @@
 // lib/screens/pet_share/pet_share_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import '../models/shared_models.dart';
-import '../services/pet_sharing_service.dart';
+import '../../models/shared_models.dart';
+import '../../services/pet_sharing_service.dart';
 
 class PetShareScreen extends StatefulWidget {
   final String petId;
   final String petName;
 
-  const PetShareScreen({Key? key, required this.petId, required this.petName})
-    : super(key: key);
+  const PetShareScreen({super.key, required this.petId, required this.petName});
 
   @override
   State<PetShareScreen> createState() => _PetShareScreenState();
@@ -309,13 +307,20 @@ ReptiTrackアプリで「招待コードで参加」から上記コードを入�
       await Share.share(shareText, subject: 'ReptiTrack - ペット共有への招待');
 
       _emailController.clear();
+
+      // Add mounted check before using context - Fix line 340
+      if (!mounted) return;
       _showSnackBar('招待を送信しました');
     } catch (e) {
+      // Add mounted check before using context
+      if (!mounted) return;
       _showSnackBar('招待の送信に失敗しました: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -336,16 +341,23 @@ ReptiTrackアプリで「招待コードで参加」から上記コードを入�
       );
 
       _inviteCodeController.clear();
+
+      // Add mounted check before using context
+      if (!mounted) return;
       _showSnackBar('ペットの共有に参加しました');
 
       // ペット一覧画面に戻る
       Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
+      // Add mounted check before using context
+      if (!mounted) return;
       _showSnackBar('参加に失敗しました: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -368,9 +380,9 @@ ReptiTrackアプリで「招待コードで参加」から上記コードを入�
     showDialog(
       context: context,
       builder:
-          (context) => StatefulBuilder(
+          (dialogContext) => StatefulBuilder(
             builder:
-                (context, setState) => AlertDialog(
+                (builderContext, setState) => AlertDialog(
                   title: Text('権限を変更'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -395,22 +407,35 @@ ReptiTrackアプリで「招待コードで参加」から上記コードを入�
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
                       child: Text('キャンセル'),
                     ),
                     ElevatedButton(
                       onPressed: () async {
+                        // Store context before async operation
+                        final navigator = Navigator.of(dialogContext);
+                        final petSharingService =
+                            builderContext.read<PetSharingService>();
+
                         try {
-                          await context
-                              .read<PetSharingService>()
-                              .updateMemberPermission(
-                                petId: widget.petId,
-                                memberId: member.userId,
-                                newPermission: selectedPermission,
-                              );
-                          Navigator.of(context).pop();
+                          await petSharingService.updateMemberPermission(
+                            petId: widget.petId,
+                            memberId: member.userId,
+                            newPermission: selectedPermission,
+                          );
+
+                          // Close dialog first
+                          navigator.pop();
+
+                          // Check mounted before using State context
+                          if (!mounted) return;
                           _showSnackBar('権限を変更しました');
                         } catch (e) {
+                          // Close dialog first
+                          navigator.pop();
+
+                          // Check mounted before using State context
+                          if (!mounted) return;
                           _showSnackBar('権限の変更に失敗しました: $e');
                         }
                       },
@@ -427,24 +452,39 @@ ReptiTrackアプリで「招待コードで参加」から上記コードを入�
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (dialogContext) => AlertDialog(
             title: Text('メンバーを削除'),
             content: Text('${member.displayName}を共有メンバーから削除しますか？'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => Navigator.of(dialogContext).pop(),
                 child: Text('キャンセル'),
               ),
               ElevatedButton(
                 onPressed: () async {
+                  // Store context before async operation
+                  final navigator = Navigator.of(dialogContext);
+                  final petSharingService =
+                      dialogContext.read<PetSharingService>();
+
                   try {
-                    await context.read<PetSharingService>().removeMember(
+                    await petSharingService.removeMember(
                       petId: widget.petId,
                       memberId: member.userId,
                     );
-                    Navigator.of(context).pop();
+
+                    // Close dialog first
+                    navigator.pop();
+
+                    // Check mounted before using State context
+                    if (!mounted) return;
                     _showSnackBar('メンバーを削除しました');
                   } catch (e) {
+                    // Close dialog first
+                    navigator.pop();
+
+                    // Check mounted before using State context
+                    if (!mounted) return;
                     _showSnackBar('削除に失敗しました: $e');
                   }
                 },
