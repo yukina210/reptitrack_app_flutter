@@ -79,6 +79,16 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  # モックとテスト用のパッケージ
+  mockito: ^5.4.4
+  build_runner: ^2.4.6
+
+  # Firebaseのテスト用パッケージ
+  firebase_auth_mocks: ^0.3.0
+  fake_cloud_firestore: ^2.0.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

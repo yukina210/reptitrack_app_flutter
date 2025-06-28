@@ -1,0 +1,99 @@
+name: 手動認証テスト
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'テスト種別'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - google
+        - apple
+        - social
+      platform:
+        description: 'プラットフォーム'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+        - android
+        - ios
+        - both
+
+jobs:
+  manual-test-setup:
+    name: 手動テスト環境セットアップ
+    runs-on: ubuntu-latest
+
+    outputs:
+      test-instructions: ${{ steps.generate-instructions.outputs.instructions }}
+
+    steps:
+    - name: テスト手順書生成
+      id: generate-instructions
+      run: |
+        cat > instructions.md << EOF
+        # 手動認証テスト手順書
+
+        **テスト種別**: ${{ github.event.inputs.test_type }}
+        **プラットフォーム**: ${{ github.event.inputs.platform }}
+        **開始時間**: $(date)
+
+        ## セットアップ手順
+
+        1. 最新のコードをプル
+        \`\`\`bash
+        git pull origin ${{ github.ref_name }}
+        flutter pub get
+        flutter packages pub run build_runner build
+        \`\`\`
+
+        2. デバイス/エミュレーターを起動
+        \`\`\`bash
+        flutter devices
+        \`\`\`
+
+        3. アプリを起動
+        \`\`\`bash
+        flutter run
+        \`\`\`
+
+        ## テスト項目
+        EOF
+
+        if [[ "${{ github.event.inputs.test_type }}" == "all" || "${{ github.event.inputs.test_type }}" == "google" ]]; then
+          cat >> instructions.md << EOF
+
+        ### Google認証テスト
+        - [ ] Googleログイン（初回）
+        - [ ] Googleログイン（既存アカウント）
+        - [ ] ログイン キャンセル
+        - [ ] 権限拒否時の処理
+        - [ ] ネットワークエラー時の処理
+        EOF
+        fi
+
+        if [[ "${{ github.event.inputs.test_type }}" == "all" || "${{ github.event.inputs.test_type }}" == "apple" ]]; then
+          cat >> instructions.md << EOF
+
+        ### Apple認証テスト（iOS必須）
+        - [ ] Apple IDログイン（初回）
+        - [ ] Apple IDログイン（既存アカウント）
+        - [ ] メール非公開オプション
+        - [ ] ログイン キャンセル
+        - [ ] Touch ID/Face ID認証
+        EOF
+        fi
+
+        echo "instructions<<EOF" >> $GITHUB_OUTPUT
+        cat instructions.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: テスト手順書をアーティファクトに保存
+      uses: actions/upload-artifact@v3
+      with:
+        name: manual-test-instructions
+        path: instructions.md

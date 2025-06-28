@@ -1,0 +1,185 @@
+name: 認証機能テスト
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'lib/services/auth_service.dart'
+      - 'lib/screens/auth_screen.dart'
+      - 'test/**'
+      - 'integration_test/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'lib/services/auth_service.dart'
+      - 'lib/screens/auth_screen.dart'
+      - 'test/**'
+      - 'integration_test/**'
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+
+jobs:
+  unit-and-widget-tests:
+    name: 単体・ウィジェットテスト
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: コードをチェックアウト
+      uses: actions/checkout@v4
+
+    - name: Flutterをセットアップ
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+
+    - name: 依存関係を取得
+      run: flutter pub get
+
+    - name: モッククラスを生成
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+    - name: コード解析
+      run: flutter analyze
+
+    - name: 単体テスト実行
+      run: flutter test test/services/auth_service_test.dart --coverage
+
+    - name: ウィジェットテスト実行
+      run: flutter test test/screens/auth_screen_test.dart --coverage
+
+    - name: カバレッジレポートをアップロード
+      uses: codecov/codecov-action@v3
+      with:
+        file: coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+
+  integration-tests-android:
+    name: Android統合テスト
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [29, 33]
+
+    steps:
+    - name: コードをチェックアウト
+      uses: actions/checkout@v4
+
+    - name: Flutterをセットアップ
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+
+    - name: 依存関係を取得
+      run: flutter pub get
+
+    - name: モッククラスを生成
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+    - name: AVDキャッシュ
+      uses: actions/cache@v3
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ matrix.api-level }}
+
+    - name: AVDを作成
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "AVD作成完了"
+
+    - name: 統合テスト実行
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        script: flutter test integration_test/auth_complete_flow_test.dart
+
+  integration-tests-ios:
+    name: iOS統合テスト
+    runs-on: macos-latest
+
+    steps:
+    - name: コードをチェックアウト
+      uses: actions/checkout@v4
+
+    - name: Flutterをセットアップ
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+
+    - name: 依存関係を取得
+      run: flutter pub get
+
+    - name: モッククラスを生成
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+    - name: iOSシミュレーターのセットアップ
+      run: |
+        xcrun simctl create TestDevice com.apple.CoreSimulator.SimDeviceType.iPhone-14 com.apple.CoreSimulator.SimRuntime.iOS-16-2
+        xcrun simctl boot TestDevice
+
+    - name: 統合テスト実行
+      run: |
+        DEVICE_ID=$(xcrun simctl list devices | grep TestDevice | grep -E -o -i "([0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12})")
+        flutter test integration_test/auth_complete_flow_test.dart -d $DEVICE_ID
+
+  test-report:
+    name: テストレポート生成
+    needs: [unit-and-widget-tests, integration-tests-android, integration-tests-ios]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: コードをチェックアウト
+      uses: actions/checkout@v4
+
+    - name: テスト結果サマリー作成
+      run: |
+        cat > test_summary.md << EOF
+        # 認証機能テスト結果 🧪
+
+        **実行日時**: $(date)
+        **コミット**: ${{ github.sha }}
+        **ブランチ**: ${{ github.ref_name }}
+
+        ## テスト結果
+
+        | テスト種別 | 結果 |
+        |-----------|------|
+        | 単体・ウィジェットテスト | ${{ needs.unit-and-widget-tests.result == 'success' && '✅ 成功' || '❌ 失敗' }} |
+        | Android統合テスト | ${{ needs.integration-tests-android.result == 'success' && '✅ 成功' || '❌ 失敗' }} |
+        | iOS統合テスト | ${{ needs.integration-tests-ios.result == 'success' && '✅ 成功' || '❌ 失敗' }} |
+
+        ## 手動テスト項目（要実施）
+
+        - [ ] Google認証テスト
+        - [ ] Apple認証テスト
+        - [ ] 複数デバイス連携テスト
+        - [ ] ネットワークエラー対応テスト
+        EOF
+
+    - name: テストレポートをコメント
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('test_summary.md', 'utf8');
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
