@@ -1,4 +1,4 @@
-// lib/services/pet_service.dart (共有機能対応版)
+// lib/services/pet_service.dart (互換性修正版)
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,12 +14,20 @@ class PetService extends ChangeNotifier {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final PetSharingService _sharingService = PetSharingService();
 
+  // 後方互換性のためのuserId（オプショナル）
+  final String? userId;
+
+  PetService({this.userId});
+
+  // 後方互換性のためのメソッド名
+  Stream<List<Pet>> getPets() => getAllPets();
+
   // 自分のペット一覧と共有されているペット一覧を取得
   Stream<List<Pet>> getAllPets() {
     final user = _auth.currentUser;
     if (user == null) return Stream.value([]);
 
-    // 自分のペットと共有ペットを並行取得
+    // 自分のペットと共有ペットを個別取得して結合
     return getOwnPets().asyncMap((ownPets) async {
       final sharedPets = await getSharedPets().first;
       return [...ownPets, ...sharedPets];
@@ -29,11 +37,12 @@ class PetService extends ChangeNotifier {
   // 自分のペット一覧を取得
   Stream<List<Pet>> getOwnPets() {
     final user = _auth.currentUser;
-    if (user == null) return Stream.value([]);
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) return Stream.value([]);
 
     return _firestore
         .collection('users')
-        .doc(user.uid)
+        .doc(targetUserId)
         .collection('pets')
         .orderBy('created_at', descending: true)
         .snapshots()
@@ -95,13 +104,14 @@ class PetService extends ChangeNotifier {
   // 特定のペットを取得（権限チェック付き）
   Future<Pet?> getPet(String petId, {String? ownerId}) async {
     final user = _auth.currentUser;
-    if (user == null) return null;
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) return null;
 
     try {
       DocumentSnapshot petDoc;
       SharePermission? permission;
 
-      if (ownerId != null && ownerId != user.uid) {
+      if (ownerId != null && ownerId != targetUserId) {
         // 共有ペットの場合
         petDoc =
             await _firestore
@@ -118,7 +128,7 @@ class PetService extends ChangeNotifier {
         petDoc =
             await _firestore
                 .collection('users')
-                .doc(user.uid)
+                .doc(targetUserId)
                 .collection('pets')
                 .doc(petId)
                 .get();
@@ -131,7 +141,7 @@ class PetService extends ChangeNotifier {
       return Pet.fromMap(
         petDoc.data() as Map<String, dynamic>,
         petDoc.id,
-        ownerId: ownerId ?? user.uid,
+        ownerId: ownerId ?? targetUserId,
         userPermission: permission,
       );
     } catch (e) {
@@ -140,10 +150,11 @@ class PetService extends ChangeNotifier {
     }
   }
 
-  // ペットを追加
+  // ペットを追加（後方互換性対応）
   Future<String> addPet(Pet pet, {File? imageFile}) async {
     final user = _auth.currentUser;
-    if (user == null) throw Exception('ユーザーがログインしていません');
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) throw Exception('ユーザーがログインしていません');
 
     try {
       String? imageUrl;
@@ -153,11 +164,12 @@ class PetService extends ChangeNotifier {
         imageUrl = await _uploadPetImage(imageFile);
       }
 
+      // ペットデータを準備（ownerIdを設定）
       final petData =
           pet
               .copyWith(
                 imageUrl: imageUrl,
-                ownerId: user.uid,
+                ownerId: targetUserId,
                 createdAt: DateTime.now(),
                 updatedAt: DateTime.now(),
               )
@@ -165,7 +177,7 @@ class PetService extends ChangeNotifier {
 
       final docRef = await _firestore
           .collection('users')
-          .doc(user.uid)
+          .doc(targetUserId)
           .collection('pets')
           .add(petData);
 
@@ -179,7 +191,10 @@ class PetService extends ChangeNotifier {
   // ペット情報を更新
   Future<void> updatePet(Pet pet, {File? imageFile}) async {
     final user = _auth.currentUser;
-    if (user == null) throw Exception('ユーザーがログインしていません');
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) throw Exception('ユーザーがログインしていません');
+
+    if (pet.id == null) throw Exception('ペットIDが必要です');
 
     // 権限チェック
     if (!pet.canEdit) {
@@ -201,13 +216,13 @@ class PetService extends ChangeNotifier {
       final updatedPetData =
           pet.copyWith(imageUrl: imageUrl, updatedAt: DateTime.now()).toMap();
 
-      final ownerUid = pet.isShared ? pet.ownerId : user.uid;
+      final ownerUid = pet.isShared ? pet.ownerId : targetUserId;
 
       await _firestore
           .collection('users')
           .doc(ownerUid)
           .collection('pets')
-          .doc(pet.id)
+          .doc(pet.id!)
           .update(updatedPetData);
     } catch (e) {
       debugPrint('Error updating pet: $e');
@@ -215,100 +230,115 @@ class PetService extends ChangeNotifier {
     }
   }
 
-  // ペットを削除
-  Future<void> deletePet(Pet pet) async {
+  // ペットを削除（後方互換性対応）
+  Future<bool> deletePet(String petId) async {
     final user = _auth.currentUser;
-    if (user == null) throw Exception('ユーザーがログインしていません');
-
-    // 権限チェック
-    if (!pet.canDelete) {
-      throw Exception('このペットを削除する権限がありません');
-    }
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) throw Exception('ユーザーがログインしていません');
 
     try {
-      final batch = _firestore.batch();
-      final ownerUid = pet.isShared ? pet.ownerId : user.uid;
+      // ペット情報を取得
+      final pet = await getPet(petId);
+      if (pet == null) throw Exception('ペットが見つかりません');
 
-      // ペット画像を削除
-      if (pet.imageUrl != null) {
-        await _deletePetImage(pet.imageUrl!);
+      // 権限チェック
+      if (!pet.canDelete) {
+        throw Exception('このペットを削除する権限がありません');
       }
 
-      // お世話記録を削除
-      final careRecordsSnapshot =
-          await _firestore
-              .collection('users')
-              .doc(ownerUid)
-              .collection('pets')
-              .doc(pet.id)
-              .collection('care_records')
-              .get();
+      await _deletePetComplete(pet);
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting pet: $e');
+      return false;
+    }
+  }
 
-      for (final doc in careRecordsSnapshot.docs) {
-        batch.delete(doc.reference);
-      }
+  // ペットを完全削除（内部メソッド）
+  Future<void> _deletePetComplete(Pet pet) async {
+    if (pet.id == null) return;
 
-      // 体重記録を削除
-      final weightRecordsSnapshot =
-          await _firestore
-              .collection('users')
-              .doc(ownerUid)
-              .collection('pets')
-              .doc(pet.id)
-              .collection('weight_records')
-              .get();
+    final batch = _firestore.batch();
+    final ownerUid = pet.ownerId ?? userId ?? _auth.currentUser?.uid;
+    if (ownerUid == null) return;
 
-      for (final doc in weightRecordsSnapshot.docs) {
-        batch.delete(doc.reference);
-      }
+    // ペット画像を削除
+    if (pet.imageUrl != null) {
+      await _deletePetImage(pet.imageUrl!);
+    }
 
-      // 共有メンバー情報を削除
-      final shareMembers =
-          await _firestore
-              .collection('users')
-              .doc(ownerUid)
-              .collection('pets')
-              .doc(pet.id)
-              .collection('shared_members')
-              .get();
-
-      for (final memberDoc in shareMembers.docs) {
-        batch.delete(memberDoc.reference);
-
-        // メンバーの共有ペット一覧からも削除
-        batch.delete(
-          _firestore
-              .collection('users')
-              .doc(memberDoc.id)
-              .collection('shared_pets')
-              .doc(pet.id),
-        );
-      }
-
-      // ペット本体を削除
-      batch.delete(
-        _firestore
+    // お世話記録を削除
+    final careRecordsSnapshot =
+        await _firestore
             .collection('users')
             .doc(ownerUid)
             .collection('pets')
-            .doc(pet.id),
-      );
+            .doc(pet.id!)
+            .collection('care_records')
+            .get();
 
-      await batch.commit();
-    } catch (e) {
-      debugPrint('Error deleting pet: $e');
-      rethrow;
+    for (final doc in careRecordsSnapshot.docs) {
+      batch.delete(doc.reference);
     }
+
+    // 体重記録を削除
+    final weightRecordsSnapshot =
+        await _firestore
+            .collection('users')
+            .doc(ownerUid)
+            .collection('pets')
+            .doc(pet.id!)
+            .collection('weight_records')
+            .get();
+
+    for (final doc in weightRecordsSnapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    // 共有メンバー情報を削除
+    final shareMembers =
+        await _firestore
+            .collection('users')
+            .doc(ownerUid)
+            .collection('pets')
+            .doc(pet.id!)
+            .collection('shared_members')
+            .get();
+
+    for (final memberDoc in shareMembers.docs) {
+      batch.delete(memberDoc.reference);
+
+      // メンバーの共有ペット一覧からも削除
+      batch.delete(
+        _firestore
+            .collection('users')
+            .doc(memberDoc.id)
+            .collection('shared_pets')
+            .doc(pet.id!),
+      );
+    }
+
+    // ペット本体を削除
+    batch.delete(
+      _firestore
+          .collection('users')
+          .doc(ownerUid)
+          .collection('pets')
+          .doc(pet.id!),
+    );
+
+    await batch.commit();
   }
 
   // ペット画像をアップロード
   Future<String> _uploadPetImage(File imageFile) async {
     final user = _auth.currentUser;
-    if (user == null) throw Exception('ユーザーがログインしていません');
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) throw Exception('ユーザーがログインしていません');
 
     try {
       final fileName =
-          'pet_${user.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          'pet_${targetUserId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final ref = _storage.ref().child('pet_images').child(fileName);
 
       await ref.putFile(imageFile);
@@ -333,7 +363,6 @@ class PetService extends ChangeNotifier {
   // 利用可能な品種リストを取得（オートコンプリート用）
   Future<List<String>> getBreedSuggestions(String category) async {
     // 実装例：カテゴリごとの一般的な品種リスト
-    // 実際のアプリでは外部APIやFirestoreから取得することも可能
     switch (category) {
       case 'snake':
         return ['ボールパイソン', 'コーンスネーク', 'キングスネーク', 'ミルクスネーク', 'レインボーボア'];
@@ -349,13 +378,14 @@ class PetService extends ChangeNotifier {
   // ペットの統計情報を取得
   Future<Map<String, dynamic>> getPetStatistics() async {
     final user = _auth.currentUser;
-    if (user == null) return {};
+    final targetUserId = userId ?? user?.uid;
+    if (targetUserId == null) return {};
 
     try {
       final ownPetsSnapshot =
           await _firestore
               .collection('users')
-              .doc(user.uid)
+              .doc(targetUserId)
               .collection('pets')
               .get();
 

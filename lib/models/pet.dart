@@ -1,4 +1,4 @@
-// lib/models/pet.dart (共有機能対応版)
+// lib/models/pet.dart (互換性修正版)
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'shared_models.dart';
 
@@ -12,7 +12,7 @@ enum Category { snake, lizard, gecko, turtle, chameleon, crocodile, other }
 enum WeightUnit { g, kg, lbs }
 
 class Pet {
-  final String id;
+  final String? id; // 新規作成時はnullを許可
   final String name;
   final Gender gender;
   final DateTime? birthday;
@@ -23,30 +23,37 @@ class Pet {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  // 共有機能関連のフィールド
-  final String ownerId; // ペットの所有者ID
+  // 共有機能関連のフィールド（オプショナル）
+  final String? ownerId; // ペットの所有者ID（新規作成時は後で設定）
   final bool isShared; // 共有されているかどうか
   final SharePermission? userPermission; // 現在のユーザーの権限
 
   Pet({
-    required this.id,
+    this.id,
     required this.name,
     required this.gender,
     this.birthday,
     required this.category,
     required this.breed,
-    required this.unit, // 体重単位は必須
+    required this.unit,
     this.imageUrl,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.ownerId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    this.ownerId,
     this.isShared = false,
     this.userPermission,
-  });
+  }) : createdAt = createdAt ?? DateTime.now(),
+       updatedAt = updatedAt ?? DateTime.now();
+
+  // 旧バージョンとの互換性のためのファクトリーコンストラクタ
+  factory Pet.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return Pet.fromMap(data, doc.id);
+  }
 
   factory Pet.fromMap(
     Map<String, dynamic> map,
-    String documentId, {
+    String? documentId, {
     String? ownerId,
     SharePermission? userPermission,
   }) {
@@ -60,13 +67,23 @@ class Pet {
               : null,
       category: _categoryFromString(map['category'] ?? 'other'),
       breed: map['breed'] ?? '',
-      unit: _unitFromString(map['unit'] ?? 'g'), // デフォルトはグラム
-      imageUrl: map['image_url'],
-      createdAt: (map['created_at'] as Timestamp).toDate(),
-      updatedAt: (map['updated_at'] as Timestamp).toDate(),
-      ownerId: ownerId ?? map['owner_id'] ?? '',
-      isShared: ownerId != null, // ownerIdが設定されている場合は共有ペット
-      userPermission: userPermission,
+      unit: _unitFromString(map['unit'] ?? 'g'),
+      imageUrl: map['image_url'] ?? map['imageUrl'], // 両方のキーに対応
+      createdAt:
+          map['created_at'] != null
+              ? (map['created_at'] as Timestamp).toDate()
+              : map['createdAt'] != null
+              ? (map['createdAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      updatedAt:
+          map['updated_at'] != null
+              ? (map['updated_at'] as Timestamp).toDate()
+              : map['updatedAt'] != null
+              ? (map['updatedAt'] as Timestamp).toDate()
+              : DateTime.now(),
+      ownerId: ownerId ?? map['owner_id'],
+      isShared: ownerId != null,
+      userPermission: userPermission ?? SharePermission.owner, // デフォルトは所有者権限
     );
   }
 
@@ -77,10 +94,13 @@ class Pet {
       'birthday': birthday != null ? Timestamp.fromDate(birthday!) : null,
       'category': category.toString().split('.').last,
       'breed': breed,
-      'unit': unit.toString().split('.').last, // 体重単位をDBに保存
+      'unit': unit.toString().split('.').last,
       'image_url': imageUrl,
+      'imageUrl': imageUrl, // 互換性のため両方保存
       'created_at': Timestamp.fromDate(createdAt),
+      'createdAt': Timestamp.fromDate(createdAt), // 互換性のため両方保存
       'updated_at': Timestamp.fromDate(updatedAt),
+      'updatedAt': Timestamp.fromDate(updatedAt), // 互換性のため両方保存
       'owner_id': ownerId,
     };
   }
@@ -132,22 +152,25 @@ class Pet {
     return getUnitText(unit);
   }
 
-  // 権限チェック用のヘルパーメソッド
+  // 権限チェック用のヘルパーメソッド（安全なデフォルト）
   bool get canEdit {
+    if (userPermission == null) return true; // 権限情報がない場合は編集可能（後方互換性）
     return userPermission == SharePermission.owner ||
         userPermission == SharePermission.editor;
   }
 
   bool get canDelete {
+    if (userPermission == null) return true; // 権限情報がない場合は削除可能（後方互換性）
     return userPermission == SharePermission.owner;
   }
 
   bool get canManageSharing {
+    if (userPermission == null) return true; // 権限情報がない場合は管理可能（後方互換性）
     return userPermission == SharePermission.owner;
   }
 
   bool get canView {
-    return userPermission != null;
+    return true; // 基本的に表示は常に可能
   }
 
   // 体重値を指定した単位に変換
@@ -196,7 +219,6 @@ class Pet {
   }
 
   Map<String, double> _getSnakeWeightRange() {
-    // 品種に基づく重量範囲（グラム単位）
     switch (breed.toLowerCase()) {
       case 'ボールパイソン':
         return {'min': 1000, 'max': 2000};
@@ -226,7 +248,7 @@ class Pet {
   }
 
   Map<String, double> _getTurtleWeightRange() {
-    return {'min': 500, 'max': 10000}; // カメは品種により大きく異なる
+    return {'min': 500, 'max': 10000};
   }
 
   // コピーメソッド（一部フィールドを更新）
@@ -235,10 +257,12 @@ class Pet {
     String? name,
     Gender? gender,
     DateTime? birthday,
+    bool clearBirthday = false,
     Category? category,
     String? breed,
-    WeightUnit? unit, // 体重単位変更対応
+    WeightUnit? unit,
     String? imageUrl,
+    bool clearImageUrl = false,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? ownerId,
@@ -249,13 +273,13 @@ class Pet {
       id: id ?? this.id,
       name: name ?? this.name,
       gender: gender ?? this.gender,
-      birthday: birthday ?? this.birthday,
+      birthday: clearBirthday ? null : (birthday ?? this.birthday),
       category: category ?? this.category,
       breed: breed ?? this.breed,
-      unit: unit ?? this.unit, // 体重単位の更新
-      imageUrl: imageUrl ?? this.imageUrl,
+      unit: unit ?? this.unit,
+      imageUrl: clearImageUrl ? null : (imageUrl ?? this.imageUrl),
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      updatedAt: updatedAt ?? DateTime.now(), // 更新時は現在時刻
       ownerId: ownerId ?? this.ownerId,
       isShared: isShared ?? this.isShared,
       userPermission: userPermission ?? this.userPermission,

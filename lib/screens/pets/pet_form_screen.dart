@@ -95,10 +95,11 @@ class PetFormScreenState extends State<PetFormScreen> {
 
         bool success;
         if (_isEditing) {
-          success = await petService.updatePet(pet, imageFile: _imageFile);
+          await petService.updatePet(pet, imageFile: _imageFile);
+          success = true; // updatePet throws an exception on failure
         } else {
           final petId = await petService.addPet(pet, imageFile: _imageFile);
-          success = petId != null;
+          success = petId.isNotEmpty;
         }
 
         // Add mounted check to ensure widget is still in the tree
@@ -122,8 +123,8 @@ class PetFormScreenState extends State<PetFormScreen> {
           context,
         ).showSnackBar(SnackBar(content: Text('エラー: $e')));
       } finally {
-        // Add mounted check to ensure widget is still in the tree
-        if (!mounted) {
+        // Add mounted check to ensure widget is still in the tree - FIX: 修正された部分
+        if (mounted) {
           setState(() {
             _isLoading = false;
           });
