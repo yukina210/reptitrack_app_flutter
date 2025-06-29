@@ -27,7 +27,7 @@ void main() {
           await user.delete();
         }
       } catch (e) {
-        print('クリーンアップエラー: $e');
+        debugPrint('クリーンアップエラー: $e');
       }
     });
 

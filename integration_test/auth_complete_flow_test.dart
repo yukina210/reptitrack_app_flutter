@@ -31,7 +31,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // === 新規登録フェーズ ===
-        print('=== 新規登録フェーズ ===');
+        debugPrint('=== 新規登録フェーズ ===');
 
         // 新規登録モードに切り替え
         await AuthTestHelper.switchToSignUpMode(tester);
@@ -48,10 +48,10 @@ void main() {
 
         // ホーム画面への遷移確認
         AuthTestHelper.expectHomeScreen();
-        print('新規登録成功: $testEmail');
+        debugPrint('新規登録成功: $testEmail');
 
         // === ログアウトフェーズ ===
-        print('=== ログアウトフェーズ ===');
+        debugPrint('=== ログアウトフェーズ ===');
 
         // 設定画面に移動
         await tester.tap(find.byIcon(Icons.settings));
@@ -67,10 +67,10 @@ void main() {
 
         // ログイン画面に戻ることを確認
         AuthTestHelper.expectLoginScreen();
-        print('ログアウト成功');
+        debugPrint('ログアウト成功');
 
         // === 再ログインフェーズ ===
-        print('=== 再ログインフェーズ ===');
+        debugPrint('=== 再ログインフェーズ ===');
 
         // 同じ認証情報でログイン
         await AuthTestHelper.fillLoginForm(
@@ -83,7 +83,7 @@ void main() {
 
         // ホーム画面への遷移確認
         AuthTestHelper.expectHomeScreen();
-        print('再ログイン成功');
+        debugPrint('再ログイン成功');
       });
 
       testWidgets('バリデーションエラーテスト', (tester) async {

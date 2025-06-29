@@ -28,8 +28,8 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      print('=== Google認証手動テスト開始 ===');
-      print('Googleログインボタンをタップしてください');
+      debugPrint('=== Google認証手動テスト開始 ===');
+      debugPrint('Googleログインボタンをタップしてください');
 
       await AuthTestHelper.tapGoogleSignInButton(tester);
 
@@ -38,15 +38,15 @@ void main() {
 
       // 認証成功後、ホーム画面に遷移することを確認
       AuthTestHelper.expectHomeScreen();
-      print('Google認証テスト完了');
+      debugPrint('Google認証テスト完了');
     }, timeout: Timeout(Duration(minutes: 2)));
 
     testWidgets('Apple認証手動テスト', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      print('=== Apple認証手動テスト開始 ===');
-      print('Appleログインボタンをタップしてください');
+      debugPrint('=== Apple認証手動テスト開始 ===');
+      debugPrint('Appleログインボタンをタップしてください');
 
       await AuthTestHelper.tapAppleSignInButton(tester);
 
@@ -55,20 +55,20 @@ void main() {
 
       // 認証成功後、ホーム画面に遷移することを確認
       AuthTestHelper.expectHomeScreen();
-      print('Apple認証テスト完了');
+      debugPrint('Apple認証テスト完了');
     }, timeout: Timeout(Duration(minutes: 2)));
 
     testWidgets('Google認証 → ログアウト → 再ログイン', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      print('=== Google認証フルフローテスト ===');
+      debugPrint('=== Google認証フルフローテスト ===');
 
       // Google認証でログイン
       await AuthTestHelper.tapGoogleSignInButton(tester);
       await tester.pumpAndSettle(Duration(seconds: 30));
       AuthTestHelper.expectHomeScreen();
-      print('Google認証ログイン成功');
+      debugPrint('Google認証ログイン成功');
 
       // ログアウト
       await tester.tap(find.byIcon(Icons.settings));
@@ -79,13 +79,13 @@ void main() {
       await tester.pumpAndSettle();
 
       AuthTestHelper.expectLoginScreen();
-      print('ログアウト成功');
+      debugPrint('ログアウト成功');
 
       // 再度Google認証でログイン
       await AuthTestHelper.tapGoogleSignInButton(tester);
       await tester.pumpAndSettle(Duration(seconds: 30));
       AuthTestHelper.expectHomeScreen();
-      print('Google再認証成功');
+      debugPrint('Google再認証成功');
     }, timeout: Timeout(Duration(minutes: 3)));
   });
 }

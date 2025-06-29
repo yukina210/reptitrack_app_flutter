@@ -21,10 +21,10 @@ class AuthTestHelper {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.delete();
-        print('テストユーザーを削除しました: ${user.email}');
+        debugPrint('テストユーザーを削除しました: ${user.email}');
       }
     } catch (e) {
-      print('ユーザー削除エラー: $e');
+      debugPrint('ユーザー削除エラー: $e');
     }
   }
 
@@ -32,9 +32,9 @@ class AuthTestHelper {
   static Future<void> signOutCurrentUser() async {
     try {
       await FirebaseAuth.instance.signOut();
-      print('サインアウト完了');
+      debugPrint('サインアウト完了');
     } catch (e) {
-      print('サインアウトエラー: $e');
+      debugPrint('サインアウトエラー: $e');
     }
   }
 
@@ -163,9 +163,9 @@ class AuthTestHelper {
     for (int i = 0; i < widgets.evaluate().length; i++) {
       try {
         final widget = tester.widget(widgets.at(i));
-        print('Widget $i: ${widget.runtimeType}');
+        debugPrint('Widget $i: ${widget.runtimeType}');
       } catch (e) {
-        print('Widget $i: Unable to get widget - $e');
+        debugPrint('Widget $i: Unable to get widget - $e');
       }
     }
   }
