@@ -33,9 +33,9 @@ class AuthService extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password);
       notifyListeners();
       return result.user;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     }
   }
 
@@ -46,9 +46,9 @@ class AuthService extends ChangeNotifier {
           .signInWithEmailAndPassword(email: email, password: password);
       notifyListeners();
       return result.user;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     }
   }
 
@@ -74,9 +74,9 @@ class AuthService extends ChangeNotifier {
       );
       notifyListeners();
       return result.user;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     } catch (e) {
       throw Exception('Googleログインでエラーが発生しました: $e');
     }
@@ -102,9 +102,9 @@ class AuthService extends ChangeNotifier {
       );
       notifyListeners();
       return result.user;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     } catch (e) {
       throw Exception('Appleログインでエラーが発生しました: $e');
     }
@@ -114,9 +114,9 @@ class AuthService extends ChangeNotifier {
   Future<void> resetPassword(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     }
   }
 
@@ -125,9 +125,9 @@ class AuthService extends ChangeNotifier {
     try {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
       notifyListeners();
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       // FirebaseAuthExceptionをそのまま再throw
-      throw e;
+      rethrow;
     } catch (e) {
       throw Exception('ログアウトでエラーが発生しました: $e');
     }
@@ -141,8 +141,8 @@ class AuthService extends ChangeNotifier {
         await user.delete();
         notifyListeners();
       }
-    } on FirebaseAuthException catch (e) {
-      throw e;
+    } on FirebaseAuthException {
+      rethrow;
     }
   }
 
@@ -205,8 +205,8 @@ class AuthService extends ChangeNotifier {
     if (user != null) {
       try {
         await user.updatePassword(newPassword);
-      } on FirebaseAuthException catch (e) {
-        throw e;
+      } on FirebaseAuthException {
+        rethrow;
       }
     }
   }
@@ -221,8 +221,8 @@ class AuthService extends ChangeNotifier {
       );
       try {
         await user.reauthenticateWithCredential(credential);
-      } on FirebaseAuthException catch (e) {
-        throw e;
+      } on FirebaseAuthException {
+        rethrow;
       }
     }
   }
