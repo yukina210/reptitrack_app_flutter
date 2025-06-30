@@ -34,7 +34,8 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result.user;
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     }
   }
 
@@ -46,7 +47,8 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result.user;
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     }
   }
 
@@ -73,7 +75,8 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result.user;
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     } catch (e) {
       throw Exception('Googleログインでエラーが発生しました: $e');
     }
@@ -100,7 +103,8 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result.user;
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     } catch (e) {
       throw Exception('Appleログインでエラーが発生しました: $e');
     }
@@ -111,7 +115,8 @@ class AuthService extends ChangeNotifier {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     }
   }
 
@@ -121,7 +126,8 @@ class AuthService extends ChangeNotifier {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
       notifyListeners();
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      // FirebaseAuthExceptionをそのまま再throw
+      throw e;
     } catch (e) {
       throw Exception('ログアウトでエラーが発生しました: $e');
     }
@@ -136,47 +142,34 @@ class AuthService extends ChangeNotifier {
         notifyListeners();
       }
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw e;
     }
   }
 
-  // FirebaseAuthExceptionのハンドリング
-  Exception _handleAuthException(FirebaseAuthException e) {
-    String message;
-
+  // ユーザー向けエラーメッセージ取得（UI用）
+  String getFirebaseErrorMessage(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':
-        message = 'パスワードが弱すぎます。より強力なパスワードを入力してください。';
-        break;
+        return 'パスワードが弱すぎます。より強力なパスワードを入力してください。';
       case 'email-already-in-use':
-        message = 'このメールアドレスは既に使用されています。';
-        break;
+        return 'このメールアドレスは既に使用されています。';
       case 'invalid-email':
-        message = 'メールアドレスの形式が正しくありません。';
-        break;
+        return 'メールアドレスの形式が正しくありません。';
       case 'user-disabled':
-        message = 'このアカウントは無効化されています。';
-        break;
+        return 'このアカウントは無効化されています。';
       case 'user-not-found':
-        message = 'このメールアドレスのユーザーは存在しません。';
-        break;
+        return 'このメールアドレスのユーザーは存在しません。';
       case 'wrong-password':
-        message = 'パスワードが正しくありません。';
-        break;
+        return 'パスワードが正しくありません。';
       case 'too-many-requests':
-        message = 'ログイン試行回数が多すぎます。しばらく時間をおいてから再試行してください。';
-        break;
+        return 'ログイン試行回数が多すぎます。しばらく時間をおいてから再試行してください。';
       case 'network-request-failed':
-        message = 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
-        break;
+        return 'ネットワークエラーが発生しました。インターネット接続を確認してください。';
       case 'requires-recent-login':
-        message = 'この操作には再ログインが必要です。';
-        break;
+        return 'この操作には再ログインが必要です。';
       default:
-        message = 'エラーが発生しました: ${e.message}';
+        return 'エラーが発生しました: ${e.message}';
     }
-
-    return Exception(message);
   }
 
   // ユーザーの認証状態確認
@@ -213,7 +206,7 @@ class AuthService extends ChangeNotifier {
       try {
         await user.updatePassword(newPassword);
       } on FirebaseAuthException catch (e) {
-        throw _handleAuthException(e);
+        throw e;
       }
     }
   }
@@ -229,7 +222,7 @@ class AuthService extends ChangeNotifier {
       try {
         await user.reauthenticateWithCredential(credential);
       } on FirebaseAuthException catch (e) {
-        throw _handleAuthException(e);
+        throw e;
       }
     }
   }
