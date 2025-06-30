@@ -35,8 +35,11 @@ void main() {
       mockGoogleSignInAccount = MockGoogleSignInAccount();
       mockGoogleAuth = MockGoogleSignInAuthentication();
 
-      // AuthServiceのインスタンスを作成（実際の実装では依存性注入を使用）
-      authService = AuthService();
+      // AuthServiceにモックされたFirebaseAuthを注入
+      authService = AuthService.withDependencies(
+        firebaseAuth: mockFirebaseAuth,
+        googleSignIn: mockGoogleSignIn,
+      );
     });
 
     group('メール認証テスト', () {
@@ -46,6 +49,8 @@ void main() {
         const password = 'password123';
 
         when(mockUserCredential.user).thenReturn(mockUser);
+        when(mockUser.uid).thenReturn('test-uid');
+        when(mockUser.email).thenReturn(email);
         when(
           mockFirebaseAuth.createUserWithEmailAndPassword(
             email: email,
@@ -72,6 +77,8 @@ void main() {
         const password = 'password123';
 
         when(mockUserCredential.user).thenReturn(mockUser);
+        when(mockUser.uid).thenReturn('test-uid');
+        when(mockUser.email).thenReturn(email);
         when(
           mockFirebaseAuth.signInWithEmailAndPassword(
             email: email,
@@ -105,7 +112,31 @@ void main() {
         ).thenThrow(
           FirebaseAuthException(
             code: 'invalid-email',
-            message: 'The email address is not valid.',
+            message: 'メールアドレスの形式が正しくありません',
+          ),
+        );
+
+        // Act & Assert
+        expect(
+          () => authService.signInWithEmail(email, password),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+
+      test('間違ったパスワードでログインが失敗する', () async {
+        // Arrange
+        const email = 'test@example.com';
+        const password = 'wrongpassword';
+
+        when(
+          mockFirebaseAuth.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          ),
+        ).thenThrow(
+          FirebaseAuthException(
+            code: 'wrong-password',
+            message: 'パスワードが正しくありません',
           ),
         );
 
@@ -129,6 +160,8 @@ void main() {
         when(mockGoogleAuth.accessToken).thenReturn('access_token');
         when(mockGoogleAuth.idToken).thenReturn('id_token');
         when(mockUserCredential.user).thenReturn(mockUser);
+        when(mockUser.uid).thenReturn('test-uid');
+        when(mockUser.email).thenReturn('test@gmail.com');
         when(
           mockFirebaseAuth.signInWithCredential(any),
         ).thenAnswer((_) async => mockUserCredential);
@@ -154,24 +187,51 @@ void main() {
         verify(mockGoogleSignIn.signIn()).called(1);
         verifyNever(mockFirebaseAuth.signInWithCredential(any));
       });
+
+      test('Google認証でエラーが発生した場合', () async {
+        // Arrange
+        when(
+          mockGoogleSignIn.signIn(),
+        ).thenAnswer((_) async => mockGoogleSignInAccount);
+        when(
+          mockGoogleSignInAccount.authentication,
+        ).thenAnswer((_) async => mockGoogleAuth);
+        when(mockGoogleAuth.accessToken).thenReturn('access_token');
+        when(mockGoogleAuth.idToken).thenReturn('id_token');
+        when(mockFirebaseAuth.signInWithCredential(any)).thenThrow(
+          FirebaseAuthException(
+            code: 'network-request-failed',
+            message: 'ネットワークエラーが発生しました',
+          ),
+        );
+
+        // Act & Assert
+        expect(
+          () => authService.signInWithGoogle(),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
     });
 
     group('Apple認証テスト', () {
       test('Apple認証でのログインが成功する', () async {
         // Arrange
-        // Note: Apple認証のモックは複雑なため、実際の実装では
-        // より詳細なモック設定が必要になります
         when(mockUserCredential.user).thenReturn(mockUser);
+        when(mockUser.uid).thenReturn('test-uid');
+        when(mockUser.email).thenReturn('test@icloud.com');
         when(
           mockFirebaseAuth.signInWithCredential(any),
         ).thenAnswer((_) async => mockUserCredential);
 
-        // この部分は実際の実装では、SignInWithApple.getAppleIDCredentialの
-        // モックが必要になります
+        // Note: SignInWithAppleのモックは複雑なため、
+        // 実際の実装では別途モック設定が必要
 
-        // Act & Assert
-        // 実際のテストでは、AppleIDCredentialのモックを作成して
-        // テストする必要があります
+        // Act
+        final result = await authService.signInWithApple();
+
+        // Assert
+        expect(result, equals(mockUser));
+        verify(mockFirebaseAuth.signInWithCredential(any)).called(1);
       });
     });
 
@@ -189,18 +249,94 @@ void main() {
         // Assert
         verify(mockFirebaseAuth.sendPasswordResetEmail(email: email)).called(1);
       });
+
+      test('存在しないメールアドレスでパスワードリセットが失敗する', () async {
+        // Arrange
+        const email = 'nonexistent@example.com';
+        when(mockFirebaseAuth.sendPasswordResetEmail(email: email)).thenThrow(
+          FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'このメールアドレスのユーザーは存在しません',
+          ),
+        );
+
+        // Act & Assert
+        expect(
+          () => authService.resetPassword(email),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
     });
 
     group('ログアウトテスト', () {
       test('ログアウトが成功する', () async {
         // Arrange
         when(mockFirebaseAuth.signOut()).thenAnswer((_) async {});
+        when(mockGoogleSignIn.signOut()).thenAnswer((_) async => null);
 
         // Act
         await authService.signOut();
 
         // Assert
         verify(mockFirebaseAuth.signOut()).called(1);
+        verify(mockGoogleSignIn.signOut()).called(1);
+      });
+
+      test('ログアウト時にエラーが発生した場合', () async {
+        // Arrange
+        when(mockFirebaseAuth.signOut()).thenThrow(
+          FirebaseAuthException(
+            code: 'network-request-failed',
+            message: 'ネットワークエラーが発生しました',
+          ),
+        );
+
+        // Act & Assert
+        expect(
+          () => authService.signOut(),
+          throwsA(isA<FirebaseAuthException>()),
+        );
+      });
+    });
+
+    group('認証状態テスト', () {
+      test('認証状態の変更を監視できる', () async {
+        // Arrange
+        when(
+          mockFirebaseAuth.authStateChanges(),
+        ).thenAnswer((_) => Stream.fromIterable([null, mockUser]));
+        when(mockUser.uid).thenReturn('test-uid');
+
+        // Act
+        final authStream = authService.authStateChanges();
+
+        // Assert
+        expect(authStream, emitsInOrder([null, mockUser]));
+      });
+
+      test('現在のユーザーを取得できる', () {
+        // Arrange
+        when(mockFirebaseAuth.currentUser).thenReturn(mockUser);
+        when(mockUser.uid).thenReturn('test-uid');
+
+        // Act
+        final currentUser = authService.currentUser;
+
+        // Assert
+        expect(currentUser, equals(mockUser));
+        verify(mockFirebaseAuth.currentUser).called(1);
+      });
+
+      test('ログインしていない場合はnullが返される', () {
+        // Arrange
+        when(mockFirebaseAuth.currentUser).thenReturn(null);
+
+        // Act
+        final currentUser = authService.currentUser;
+
+        // Assert
+        expect(currentUser, isNull);
+        verify(mockFirebaseAuth.currentUser).called(1);
       });
     });
   });
