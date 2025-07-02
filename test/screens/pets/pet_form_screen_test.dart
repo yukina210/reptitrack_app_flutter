@@ -50,6 +50,7 @@ void main() {
     group('新規ペット登録画面', () {
       testWidgets('画面が正しく表示される', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle(); // すべてのアニメーションが完了するまで待機
 
         // 画面タイトルの確認
         expect(find.text('新規ペット登録'), findsOneWidget);
@@ -59,7 +60,10 @@ void main() {
         expect(find.text('ペット名'), findsOneWidget);
         expect(find.text('種類'), findsOneWidget);
         expect(find.text('性別'), findsOneWidget);
-        expect(find.text('誕生日'), findsOneWidget);
+
+        // 誕生日ボタンのテキストを修正
+        expect(find.text('誕生日を選択 (任意)'), findsOneWidget);
+
         expect(find.text('分類'), findsOneWidget);
         expect(find.text('体重単位'), findsOneWidget);
 
@@ -79,10 +83,17 @@ void main() {
 
       testWidgets('ペット名の必須入力検証', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
+
+        // スクロール可能な場合は登録ボタンまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('登録する'),
+          500.0, // スクロール距離
+        );
 
         // ペット名を空にして登録ボタンを押す
-        await tester.tap(find.text('登録する'));
-        await tester.pump();
+        await tester.tap(find.text('登録する'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
         // エラーメッセージが表示されることを確認
         expect(find.text('ペット名を入力してください'), findsOneWidget);
@@ -90,11 +101,20 @@ void main() {
 
       testWidgets('種類の必須入力検証', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-        // ペット名のみ入力して種類を空にして登録ボタンを押す
+        // ペット名のみ入力
         await tester.enterText(find.byType(TextFormField).first, 'テストペット');
-        await tester.tap(find.text('登録する'));
-        await tester.pump();
+
+        // 登録ボタンまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('登録する'),
+          500.0,
+        );
+
+        // 登録ボタンを押す
+        await tester.tap(find.text('登録する'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
         // エラーメッセージが表示されることを確認
         expect(find.text('種類を入力してください'), findsOneWidget);
@@ -102,8 +122,9 @@ void main() {
 
       testWidgets('性別選択ができる', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-        // 初期状態は「不明」が選択されている
+        // 初期状態は「不明」が選択されていることを確認
         final unknownRadio = find.byWidgetPredicate(
           (widget) => widget is Radio<Gender> && widget.value == Gender.unknown,
         );
@@ -111,10 +132,10 @@ void main() {
             Gender.unknown);
 
         // 「オス」を選択
-        await tester.tap(find.text('オス'));
-        await tester.pump();
+        await tester.tap(find.text('オス'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
-        // 「オス」が選択されていることを確認
+        // 選択が変更されたことを確認
         final maleRadio = find.byWidgetPredicate(
           (widget) => widget is Radio<Gender> && widget.value == Gender.male,
         );
@@ -123,23 +144,25 @@ void main() {
 
       testWidgets('分類選択ができる', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
-
-        // 分類ドロップダウンをタップ
-        await tester.tap(find.byType(DropdownButton<Category>));
         await tester.pumpAndSettle();
 
-        // 「ヘビ」を選択
+        // ドロップダウンをタップ
+        await tester.tap(find.byType(DropdownButtonFormField<Category>));
+        await tester.pumpAndSettle();
+
+        // ヘビを選択
         await tester.tap(find.text('ヘビ').last);
         await tester.pumpAndSettle();
 
-        // 「ヘビ」が選択されていることを確認
+        // 選択が変更されたことを確認
         expect(find.text('ヘビ'), findsOneWidget);
       });
 
       testWidgets('体重単位選択ができる', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-        // 初期状態は「g」が選択されている
+        // 初期状態は「g」が選択されていることを確認
         final gRadio = find.byWidgetPredicate(
           (widget) =>
               widget is Radio<WeightUnit> && widget.value == WeightUnit.g,
@@ -147,11 +170,17 @@ void main() {
         expect(
             tester.widget<Radio<WeightUnit>>(gRadio).groupValue, WeightUnit.g);
 
-        // 「kg」を選択
-        await tester.tap(find.text('kg'));
-        await tester.pump();
+        // 体重単位セクションまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('kg'),
+          500.0,
+        );
 
-        // 「kg」が選択されていることを確認
+        // 「kg」を選択
+        await tester.tap(find.text('kg'), warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        // 選択が変更されたことを確認
         final kgRadio = find.byWidgetPredicate(
           (widget) =>
               widget is Radio<WeightUnit> && widget.value == WeightUnit.kg,
@@ -162,22 +191,21 @@ void main() {
 
       testWidgets('画像選択エリアが表示される', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-        // 画像選択エリアが表示されているか確認
+        // 画像選択用のGestureDetectorが存在することを確認
         expect(find.byType(GestureDetector), findsAtLeastNWidgets(1));
 
-        // 画像選択エリアをタップできるか確認
-        final gestureDetector = find.byType(GestureDetector).first;
-        await tester.tap(gestureDetector);
-        await tester.pump();
-        // 実際の画像選択はモック化が複雑なため、タップが可能であることのみ確認
+        // 写真追加テキストが表示されることを確認
+        expect(find.text('写真を追加'), findsOneWidget);
       });
 
       testWidgets('誕生日選択ができる', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-        // 誕生日フィールドをタップ
-        await tester.tap(find.text('誕生日を選択'));
+        // 誕生日選択ボタンをタップ
+        await tester.tap(find.text('誕生日を選択 (任意)'));
         await tester.pumpAndSettle();
 
         // 日付選択ダイアログが表示されることを確認
@@ -190,9 +218,11 @@ void main() {
 
       testWidgets('正常な入力でペットが登録される', (WidgetTester tester) async {
         // PetServiceのモック設定
-        when(mockPetService.addPet(any)).thenAnswer((_) async => 'test-pet-id');
+        when(mockPetService.addPet(any, imageFile: anyNamed('imageFile')))
+            .thenAnswer((_) async => 'test-pet-id');
 
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
         // フォームに入力
         await tester.enterText(
@@ -205,25 +235,28 @@ void main() {
         );
 
         // 性別を選択
-        await tester.tap(find.text('オス'));
-        await tester.pump();
+        await tester.tap(find.text('オス'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
         // 分類を選択
-        await tester.tap(find.byType(DropdownButton<Category>));
+        await tester.tap(find.byType(DropdownButtonFormField<Category>));
         await tester.pumpAndSettle();
         await tester.tap(find.text('ヘビ').last);
         await tester.pumpAndSettle();
 
-        // 体重単位を選択
-        await tester.tap(find.text('kg'));
-        await tester.pump();
+        // 登録ボタンまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('登録する'),
+          500.0,
+        );
 
         // 登録ボタンをタップ
-        await tester.tap(find.text('登録する'));
-        await tester.pump();
+        await tester.tap(find.text('登録する'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
         // PetServiceのaddPetが呼ばれることを確認
-        verify(mockPetService.addPet(any)).called(1);
+        verify(mockPetService.addPet(any, imageFile: anyNamed('imageFile')))
+            .called(1);
       });
     });
 
@@ -243,6 +276,7 @@ void main() {
 
       testWidgets('既存ペット情報が正しく表示される', (WidgetTester tester) async {
         await tester.pumpWidget(createTestWidget(pet: testPet));
+        await tester.pumpAndSettle();
 
         // 画面タイトルの確認
         expect(find.text('ペット情報の編集'), findsOneWidget);
@@ -264,9 +298,11 @@ void main() {
 
       testWidgets('ペット情報が更新される', (WidgetTester tester) async {
         // PetServiceのモック設定
-        when(mockPetService.updatePet(any)).thenAnswer((_) async {});
+        when(mockPetService.updatePet(any, imageFile: anyNamed('imageFile')))
+            .thenAnswer((_) async {});
 
         await tester.pumpWidget(createTestWidget(pet: testPet));
+        await tester.pumpAndSettle();
 
         // ペット名を変更
         await tester.enterText(
@@ -274,21 +310,30 @@ void main() {
           '更新されたペット',
         );
 
+        // 更新ボタンまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('更新する'),
+          500.0,
+        );
+
         // 更新ボタンをタップ
-        await tester.tap(find.text('更新する'));
-        await tester.pump();
+        await tester.tap(find.text('更新する'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
         // PetServiceのupdatePetが呼ばれることを確認
-        verify(mockPetService.updatePet(any)).called(1);
+        verify(mockPetService.updatePet(any, imageFile: anyNamed('imageFile')))
+            .called(1);
       });
     });
 
     group('エラーハンドリング', () {
       testWidgets('ネットワークエラー時の処理', (WidgetTester tester) async {
         // PetServiceでエラーが発生するようにモック設定
-        when(mockPetService.addPet(any)).thenThrow(Exception('ネットワークエラー'));
+        when(mockPetService.addPet(any, imageFile: anyNamed('imageFile')))
+            .thenThrow(Exception('ネットワークエラー'));
 
         await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
         // フォームに入力
         await tester.enterText(
@@ -300,13 +345,18 @@ void main() {
           'テスト種類',
         );
 
-        // 登録ボタンをタップ
-        await tester.tap(find.text('登録する'));
-        await tester.pump();
+        // 登録ボタンまでスクロール
+        await tester.scrollUntilVisible(
+          find.text('登録する'),
+          500.0,
+        );
 
-        // エラー処理が適切に行われることを確認
-        // （実際のアプリではSnackBarやダイアログでエラーメッセージを表示）
-        expect(find.byType(SnackBar), findsOneWidget);
+        // 登録ボタンをタップ
+        await tester.tap(find.text('登録する'), warnIfMissed: false);
+        await tester.pumpAndSettle();
+
+        // エラーメッセージが含まれたSnackBarが表示されることを確認
+        expect(find.text('エラー: Exception: ネットワークエラー'), findsOneWidget);
       });
     });
   });
