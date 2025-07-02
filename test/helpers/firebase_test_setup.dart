@@ -1,118 +1,136 @@
 // test/helpers/firebase_test_setup.dart
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 class FirebaseTestSetup {
   static bool _initialized = false;
 
-  /// テスト用のFirebase初期化
+  /// テスト用のFirebase初期化（新しいAPI使用）
   static Future<void> setupFirebaseForTesting() async {
     if (_initialized) return;
 
-    // Firebase Core のモックチャンネル設定
-    const MethodChannel(
-      'plugins.flutter.io/firebase_core',
-    ).setMockMethodCallHandler((methodCall) async {
-      switch (methodCall.method) {
-        case 'Firebase#initializeCore':
-          return [
-            {
-              'name': '[DEFAULT]',
-              'options': {
-                'apiKey': 'test-api-key',
-                'appId': 'test-app-id',
-                'messagingSenderId': 'test-sender-id',
-                'projectId': 'test-project-id',
-                'storageBucket': 'test-storage-bucket',
+    TestWidgetsFlutterBinding.ensureInitialized();
+
+    // Firebase Core のモックチャンネル設定（新しいAPI）
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/firebase_core'),
+      (methodCall) async {
+        switch (methodCall.method) {
+          case 'Firebase#initializeCore':
+            return [
+              {
+                'name': '[DEFAULT]',
+                'options': {
+                  'apiKey': 'test-api-key',
+                  'appId': 'test-app-id',
+                  'messagingSenderId': 'test-sender-id',
+                  'projectId': 'test-project-id',
+                  'storageBucket': 'test-storage-bucket',
+                },
+                'pluginConstants': {},
               },
+            ];
+          case 'Firebase#initializeApp':
+            return {
+              'name': methodCall.arguments?['appName'] ?? '[DEFAULT]',
+              'options': methodCall.arguments?['options'],
               'pluginConstants': {},
-            },
-          ];
-        case 'Firebase#initializeApp':
-          return {
-            'name': methodCall.arguments?['appName'] ?? '[DEFAULT]',
-            'options': methodCall.arguments?['options'],
-            'pluginConstants': {},
-          };
-        default:
-          return null;
-      }
-    });
+            };
+          default:
+            return null;
+        }
+      },
+    );
 
-    // Firebase Auth のモックチャンネル設定
-    const MethodChannel(
-      'plugins.flutter.io/firebase_auth',
-    ).setMockMethodCallHandler((methodCall) async {
-      switch (methodCall.method) {
-        case 'Auth#registerIdTokenListener':
-        case 'Auth#registerAuthStateListener':
-          return {'user': null};
-        case 'Auth#signOut':
-          return null;
-        case 'Auth#createUserWithEmailAndPassword':
-          return {
-            'user': {
-              'uid': 'test-uid',
-              'email': methodCall.arguments?['email'],
-              'emailVerified': false,
-            },
-          };
-        case 'Auth#signInWithEmailAndPassword':
-          return {
-            'user': {
-              'uid': 'test-uid',
-              'email': methodCall.arguments?['email'],
-              'emailVerified': true,
-            },
-          };
-        case 'Auth#sendPasswordResetEmail':
-          return null;
-        default:
-          return null;
-      }
-    });
+    // Firebase Auth のモックチャンネル設定（新しいAPI）
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/firebase_auth'),
+      (methodCall) async {
+        switch (methodCall.method) {
+          case 'Auth#registerIdTokenListener':
+          case 'Auth#registerAuthStateListener':
+            return {'user': null};
+          case 'Auth#signOut':
+            return null;
+          case 'Auth#createUserWithEmailAndPassword':
+            return {
+              'user': {
+                'uid': 'test-uid',
+                'email': methodCall.arguments?['email'],
+                'emailVerified': false,
+              },
+            };
+          case 'Auth#signInWithEmailAndPassword':
+            return {
+              'user': {
+                'uid': 'test-uid',
+                'email': methodCall.arguments?['email'],
+                'emailVerified': true,
+              },
+            };
+          case 'Auth#sendPasswordResetEmail':
+            return null;
+          default:
+            return null;
+        }
+      },
+    );
 
-    // Firebase Firestore のモックチャンネル設定
-    const MethodChannel(
-      'plugins.flutter.io/cloud_firestore',
-    ).setMockMethodCallHandler((methodCall) async {
-      switch (methodCall.method) {
-        case 'Firestore#enableNetwork':
-        case 'Firestore#disableNetwork':
-          return null;
-        case 'DocumentReference#set':
-        case 'DocumentReference#update':
-        case 'DocumentReference#delete':
-          return null;
-        case 'DocumentReference#get':
-          return {
-            'data': {},
-            'metadata': {'isFromCache': false, 'hasPendingWrites': false},
-          };
-        case 'Query#get':
-          return {
-            'documents': [],
-            'metadata': {'isFromCache': false, 'hasPendingWrites': false},
-          };
-        default:
-          return null;
-      }
-    });
+    // Firebase Firestore のモックチャンネル設定（新しいAPI）
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/cloud_firestore'),
+      (methodCall) async {
+        switch (methodCall.method) {
+          case 'Firestore#enableNetwork':
+          case 'Firestore#disableNetwork':
+            return null;
+          case 'DocumentReference#set':
+          case 'DocumentReference#update':
+          case 'DocumentReference#delete':
+            return null;
+          case 'DocumentReference#get':
+            return {
+              'data': {},
+              'metadata': {'isFromCache': false, 'hasPendingWrites': false},
+            };
+          case 'Query#get':
+            return {
+              'documents': [],
+              'metadata': {'isFromCache': false, 'hasPendingWrites': false},
+            };
+          default:
+            return null;
+        }
+      },
+    );
 
     _initialized = true;
   }
 
-  /// テスト後のクリーンアップ
+  /// テスト後のクリーンアップ（新しいAPI）
   static void tearDownFirebase() {
-    const MethodChannel(
-      'plugins.flutter.io/firebase_core',
-    ).setMockMethodCallHandler(null);
-    const MethodChannel(
-      'plugins.flutter.io/firebase_auth',
-    ).setMockMethodCallHandler(null);
-    const MethodChannel(
-      'plugins.flutter.io/cloud_firestore',
-    ).setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/firebase_core'),
+      null,
+    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/firebase_auth'),
+      null,
+    );
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/cloud_firestore'),
+      null,
+    );
     _initialized = false;
   }
 
@@ -125,9 +143,10 @@ class FirebaseTestSetup {
       // Cloud Firestore エミュレーター
       FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
 
-      print('Firebase エミュレーターに接続しました');
+      // デバッグ出力をdebugPrintに変更（Lintエラー対応）
+      debugPrint('Firebase エミュレーターに接続しました');
     } catch (e) {
-      print('Firebase エミュレーター接続エラー: $e');
+      debugPrint('Firebase エミュレーター接続エラー: $e');
     }
   }
 
@@ -171,7 +190,7 @@ class TestEnvironment {
       // エミュレーター接続
       await FirebaseTestSetup.connectToEmulator();
     } catch (e) {
-      print('エミュレーターセットアップエラー: $e');
+      debugPrint('エミュレーターセットアップエラー: $e');
       // エミュレーターが利用できない場合はモックを使用
       await FirebaseTestSetup.setupFirebaseForTesting();
     }

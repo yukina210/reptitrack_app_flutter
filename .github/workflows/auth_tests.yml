@@ -22,7 +22,7 @@ env:
   FLUTTER_VERSION: '3.24.5'
 
 jobs:
-  unit-and-widget-tests:
+  unit_and_widget_tests:
     name: 単体・ウィジェットテスト
     runs-on: ubuntu-latest
 
@@ -35,7 +35,7 @@ jobs:
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
         channel: 'stable'
-        cache: true  # ⭐ キャッシュ追加
+        cache: true
 
     - name: Flutter バージョン確認
       run: |
@@ -49,7 +49,7 @@ jobs:
       run: flutter pub deps
 
     - name: モッククラスを生成
-      run: dart run build_runner build --delete-conflicting-outputs  # ⭐ 修正
+      run: dart run build_runner build --delete-conflicting-outputs
 
     - name: コード解析
       run: flutter analyze
@@ -87,15 +87,15 @@ jobs:
         file: coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
-        fail_ci_if_error: false  # ⭐ CIを止めない
+        fail_ci_if_error: false
 
-  integration-tests-android:
+  integration_tests_android:
     name: Android統合テスト
     runs-on: macos-latest
     strategy:
       matrix:
         api-level: [29, 33]
-    if: contains(github.event.head_commit.message, '[integration]') || github.event_name == 'pull_request'  # ⭐ 条件付き実行
+    if: contains(github.event.head_commit.message, '[integration]') || github.event_name == 'pull_request'
 
     steps:
     - name: コードをチェックアウト
@@ -144,10 +144,10 @@ jobs:
             echo "統合テストファイルが見つかりません。スキップします。"
           fi
 
-  integration-tests-ios:
+  integration_tests_ios:
     name: iOS統合テスト
     runs-on: macos-latest
-    if: contains(github.event.head_commit.message, '[integration]') || github.event_name == 'pull_request'  # ⭐ 条件付き実行
+    if: contains(github.event.head_commit.message, '[integration]') || github.event_name == 'pull_request'
 
     steps:
     - name: コードをチェックアウト
@@ -181,14 +181,14 @@ jobs:
     - name: 統合テスト実行
       run: |
         if [ -f "integration_test/auth_complete_flow_test.dart" ]; then
-          flutter test integration_test/auth_complete_flow_test.dart -d ${{ env.DEVICE_ID }}
+          flutter test integration_test/auth_complete_flow_test.dart -d $DEVICE_ID
         else
           echo "統合テストファイルが見つかりません。スキップします。"
         fi
 
-  test-report:
+  test_report:
     name: テストレポート生成
-    needs: [unit-and-widget-tests]
+    needs: [unit_and_widget_tests, integration_tests_android, integration_tests_ios]
     runs-on: ubuntu-latest
     if: always()
 
@@ -210,9 +210,9 @@ jobs:
 
         | テスト種別 | 結果 | 詳細 |
         |-----------|------|------|
-        | 🧪 単体・ウィジェットテスト | ${{ needs.unit-and-widget-tests.result == 'success' && '✅ 成功' || '❌ 失敗' }} | AuthService (16テスト), AuthScreen (8テスト) |
-        | 🤖 Android統合テスト | ${{ needs.integration-tests-android.result == 'success' && '✅ 成功' || needs.integration-tests-android.result == 'skipped' && '⏭️ スキップ' || '❌ 失敗' }} | API 29, 33 |
-        | 🍎 iOS統合テスト | ${{ needs.integration-tests-ios.result == 'success' && '✅ 成功' || needs.integration-tests-ios.result == 'skipped' && '⏭️ スキップ' || '❌ 失敗' }} | iOS シミュレーター |
+        | 🧪 単体・ウィジェットテスト | ${{ needs.unit_and_widget_tests.result == 'success' && '✅ 成功' || '❌ 失敗' }} | AuthService (16テスト), AuthScreen (8テスト) |
+        | 🤖 Android統合テスト | ${{ (needs.integration_tests_android.result == 'success' && '✅ 成功') || (needs.integration_tests_android.result == 'skipped' && '⏭️ スキップ') || '❌ 失敗' }} | API 29, 33 |
+        | 🍎 iOS統合テスト | ${{ (needs.integration_tests_ios.result == 'success' && '✅ 成功') || (needs.integration_tests_ios.result == 'skipped' && '⏭️ スキップ') || '❌ 失敗' }} | iOS シミュレーター |
 
         ## 🧪 テストカバレッジ
 
@@ -229,7 +229,7 @@ jobs:
 
         ## 💡 次のステップ
 
-        ${{ needs.unit-and-widget-tests.result == 'success' && '認証機能の単体テストは完璧です！次は他の機能のテスト追加を検討してください。' || '⚠️ テストの修正が必要です。エラーログを確認してください。' }}
+        ${{ needs.unit_and_widget_tests.result == 'success' && '認証機能の単体テストは完璧です！次は他の機能のテスト追加を検討してください。' || '⚠️ テストの修正が必要です。エラーログを確認してください。' }}
         EOF
 
     - name: テストレポートをコメント
