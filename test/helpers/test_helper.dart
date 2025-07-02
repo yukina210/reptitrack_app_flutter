@@ -1,7 +1,20 @@
-// test/helpers/test_helpers.dart
+// test/helpers/test_helper.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/foundation.dart';
+import 'package:reptitrack_app/models/pet.dart';
+
+/// TimeoutException のカスタム実装
+class TimeoutException implements Exception {
+  final String message;
+  final Duration timeout;
+
+  const TimeoutException(this.message, this.timeout);
+
+  @override
+  String toString() =>
+      'TimeoutException: $message (timeout: ${timeout.inSeconds}s)';
+}
 
 /// テスト用のヘルパー関数群
 class TestHelpers {
@@ -54,12 +67,7 @@ class TestHelpers {
   }) async {
     for (int attempt = 0; attempt < maxAttempts; attempt++) {
       if (finder.evaluate().isNotEmpty) {
-        try {
-          await tester.scrollUntilVisible(finder, scrollDelta);
-          return;
-        } catch (e) {
-          // scrollUntilVisibleが失敗した場合は手動スクロールを試行
-        }
+        return;
       }
 
       // 手動で下にスクロール
@@ -82,6 +90,57 @@ class TestHelpers {
       throw StateError(
           'Could not find widget after $maxAttempts scroll attempts');
     }
+  }
+
+  /// 安全なタップ処理
+  static Future<void> safeTap(
+    WidgetTester tester,
+    Finder finder, {
+    bool warnIfMissed = true,
+  }) async {
+    if (finder.evaluate().isEmpty) {
+      if (warnIfMissed) {
+        debugPrint('Warning: Widget not found for tap: $finder');
+      }
+      return;
+    }
+
+    await tester.tap(finder);
+    await tester.pumpAndSettle();
+  }
+
+  /// 安全なテキスト入力
+  static Future<void> safeEnterText(
+    WidgetTester tester,
+    Finder finder,
+    String text,
+  ) async {
+    if (finder.evaluate().isEmpty) {
+      throw StateError('TextFormField not found: $finder');
+    }
+
+    await tester.enterText(finder, text);
+    await tester.pumpAndSettle();
+  }
+
+  /// ラジオボタンの選択
+  static Future<void> selectRadioButton(
+    WidgetTester tester,
+    String labelText,
+  ) async {
+    await safeTap(tester, find.text(labelText));
+  }
+
+  /// ドロップダウンの選択
+  static Future<void> selectDropdownItem(
+    WidgetTester tester,
+    String itemText,
+  ) async {
+    // ドロップダウンを開く
+    await safeTap(tester, find.byType(DropdownButtonFormField));
+
+    // アイテムを選択
+    await safeTap(tester, find.text(itemText).last);
   }
 
   /// フォームの検証エラーをチェック
@@ -122,75 +181,8 @@ class TestHelpers {
     String expectedValue,
   ) {
     final textField = find.byType(TextFormField).at(fieldIndex);
-    final controller = tester.widget<TextFormField>(textField).controller;
-    expect(controller?.text, equals(expectedValue));
-  }
-
-  /// 安全なタップ操作（警告を無視）
-  static Future<void> safeTap(
-    WidgetTester tester,
-    Finder finder, {
-    bool warnIfMissed = false,
-  }) async {
-    await tester.tap(finder, warnIfMissed: warnIfMissed);
-    await tester.pumpAndSettle();
-  }
-
-  /// 安全なテキスト入力
-  static Future<void> safeEnterText(
-    WidgetTester tester,
-    Finder finder,
-    String text,
-  ) async {
-    await tester.enterText(finder, text);
-    await tester.pumpAndSettle();
-  }
-
-  /// ドロップダウンメニューの選択
-  static Future<void> selectDropdownItem(
-    WidgetTester tester,
-    String itemText,
-  ) async {
-    // DropdownButtonFormFieldを見つけてタップ
-    final dropdown = find.byType(DropdownButtonFormField);
-
-    if (dropdown.evaluate().isNotEmpty) {
-      await safeTap(tester, dropdown.first);
-      // アイテムを選択
-      await safeTap(tester, find.text(itemText).last);
-    } else {
-      throw StateError('DropdownButtonFormField not found');
-    }
-  }
-
-  /// フォーム送信の実行
-  static Future<void> submitForm(
-    WidgetTester tester,
-    String buttonText,
-  ) async {
-    // ボタンまでスクロール
-    await scrollToWidget(tester, find.text(buttonText));
-
-    // ボタンをタップ
-    await safeTap(tester, find.text(buttonText));
-  }
-
-  /// ラジオボタンの選択
-  static Future<void> selectRadioButton(
-    WidgetTester tester,
-    String labelText,
-  ) async {
-    await safeTap(tester, find.text(labelText));
-  }
-
-  /// ウィジェットが表示されているかチェック
-  static bool isWidgetDisplayed(Finder finder) {
-    return finder.evaluate().isNotEmpty;
-  }
-
-  /// 特定のテキストが存在するかチェック
-  static bool hasText(String text) {
-    return find.text(text).evaluate().isNotEmpty;
+    final textFormField = tester.widget<TextFormField>(textField);
+    expect(textFormField.controller?.text, equals(expectedValue));
   }
 
   /// 複数のテキストフィールドに順次入力
@@ -226,11 +218,6 @@ class TestHelpers {
     await safeTap(tester, find.text('キャンセル'));
   }
 
-  /// エラー状態のクリア
-  static Future<void> clearErrors(WidgetTester tester) async {
-    await tester.pumpAndSettle();
-  }
-
   /// PetFormScreen専用：カテゴリー選択
   static Future<void> selectPetCategory(
     WidgetTester tester,
@@ -262,79 +249,60 @@ class TestHelpers {
     required String breed,
     String? gender,
     String? category,
-    String? weightUnit,
+    String? unit,
+    bool selectBirthday = false,
   }) async {
-    // ペット名を入力
-    await safeEnterText(tester, find.byType(TextFormField).first, name);
+    // ペット名と種類を入力
+    await fillTextFields(tester, [name, breed]);
 
-    // 種類を入力
-    await safeEnterText(tester, find.byType(TextFormField).at(1), breed);
-
-    // 性別を選択
+    // 性別選択
     if (gender != null) {
       await selectPetGender(tester, gender);
     }
 
-    // カテゴリーを選択
+    // 分類選択
     if (category != null) {
       await selectPetCategory(tester, category);
     }
 
-    // 体重単位を選択
-    if (weightUnit != null) {
-      await selectWeightUnit(tester, weightUnit);
+    // 体重単位選択
+    if (unit != null) {
+      await selectWeightUnit(tester, unit);
+    }
+
+    // 誕生日選択（オプション）
+    if (selectBirthday) {
+      await openDatePicker(tester, '誕生日を選択 (任意)');
+      await confirmDateSelection(tester);
     }
   }
 
-  /// エラー処理のヘルパー：期待されるエラーメッセージが表示されるかチェック
-  static void expectErrorMessage(String errorMessage) {
-    expect(find.text(errorMessage), findsOneWidget);
-  }
-
-  /// 成功処理のヘルパー：期待される成功メッセージが表示されるかチェック
-  static void expectSuccessMessage(String successMessage) {
-    expect(find.text(successMessage), findsOneWidget);
-  }
-
-  /// ローディング状態をチェック
-  static void expectLoadingIndicator() {
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  }
-
-  /// ローディング状態でないことをチェック
-  static void expectNoLoadingIndicator() {
-    expect(find.byType(CircularProgressIndicator), findsNothing);
-  }
-
-  /// 特定のアイコンが表示されているかチェック
-  static void expectIcon(IconData iconData) {
-    expect(find.byIcon(iconData), findsOneWidget);
-  }
-
-  /// ボタンが有効かチェック
-  static void expectButtonEnabled(String buttonText) {
-    final button = find.text(buttonText);
-    expect(button, findsOneWidget);
-
-    final buttonWidget = find.ancestor(
-      of: button,
-      matching: find.byType(ElevatedButton),
+  /// ユニークなボタンFinder
+  static Finder findButtonByText(String buttonText) {
+    return find.byWidgetPredicate(
+      (widget) =>
+          widget is ElevatedButton &&
+          widget.child is Text &&
+          (widget.child as Text).data == buttonText,
     );
-
-    if (buttonWidget.evaluate().isNotEmpty) {
-      // ボタンが見つかったことを確認（有効性はタップ可能かで判断）
-      expect(buttonWidget, findsOneWidget);
-    }
   }
-}
 
-/// カスタムタイムアウト例外
-class TimeoutException implements Exception {
-  final String message;
-  final Duration timeout;
+  /// 性別ラジオボタンのFinder
+  static Finder findGenderRadio(Gender gender) {
+    return find.byWidgetPredicate(
+      (widget) => widget is Radio<Gender> && widget.value == gender,
+    );
+  }
 
-  const TimeoutException(this.message, this.timeout);
+  /// 体重単位ラジオボタンのFinder
+  static Finder findWeightUnitRadio(WeightUnit unit) {
+    return find.byWidgetPredicate(
+      (widget) => widget is Radio<WeightUnit> && widget.value == unit,
+    );
+  }
 
-  @override
-  String toString() => 'TimeoutException: $message';
+  /// エラー状態のクリア
+  static Future<void> clearErrors(WidgetTester tester) async {
+    await tester.pumpAndSettle();
+  }
 }
