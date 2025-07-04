@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../models/pet.dart';
+import '../../models/shared_models.dart'; // SharePermissionをインポート
 import '../../services/pet_service.dart';
 import '../../services/auth_service.dart';
 import '../../services/settings_service.dart';
-import '../navigation/main_navigation_screen.dart';
 import 'pet_form_screen.dart';
 import 'pet_detail_screen.dart';
 
@@ -23,26 +23,25 @@ class PetListScreen extends StatelessWidget {
     // Ensure user is logged in
     if (authService.currentUser == null) {
       return Scaffold(
-        appBar:
-            showAppBar
-                ? AppBar(
-                  title: Text(
-                    settingsService.getText('please_login', 'Please login'),
-                  ),
-                  backgroundColor: Colors.green,
-                )
-                : null,
+        appBar: showAppBar
+            ? AppBar(
+                title: Text(
+                  settingsService.getText('please_login', 'Please login'),
+                ),
+                backgroundColor: Colors.green,
+              )
+            : null,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.login, size: 80, color: Colors.grey),
-              SizedBox(height: 16),
+              const Icon(Icons.login, size: 80, color: Colors.grey),
+              const SizedBox(height: 16),
               Text(
                 settingsService.getText('please_login', 'Please login'),
                 style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushReplacementNamed('/auth');
@@ -56,55 +55,86 @@ class PetListScreen extends StatelessWidget {
       );
     }
 
-    final petService = PetService(userId: authService.currentUser!.uid);
+    // テスト環境でPetServiceがProviderとして提供されているかチェック
+    PetService petService;
+    try {
+      petService = Provider.of<PetService>(context, listen: false);
+    } catch (e) {
+      // Providerに見つからない場合は新しくインスタンスを作成
+      petService = PetService(userId: authService.currentUser!.uid);
+    }
 
     return Scaffold(
-      appBar:
-          showAppBar
-              ? AppBar(
-                title: Text(settingsService.getText('my_pets', 'My Pets')),
-                backgroundColor: Colors.green,
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.exit_to_app),
-                    onPressed: () async {
-                      await authService.signOut();
-                      if (context.mounted) {
-                        Navigator.of(context).pushReplacementNamed('/auth');
-                      }
-                    },
-                    tooltip: settingsService.getText('sign_out', 'Sign Out'),
-                  ),
-                ],
-              )
-              : AppBar(
-                title: Text(settingsService.getText('my_pets', 'My Pets')),
-                backgroundColor: Colors.green,
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.exit_to_app),
-                    onPressed: () async {
-                      await authService.signOut();
-                      if (context.mounted) {
-                        Navigator.of(context).pushReplacementNamed('/auth');
-                      }
-                    },
-                    tooltip: settingsService.getText('sign_out', 'Sign Out'),
-                  ),
-                ],
-              ),
+      appBar: showAppBar
+          ? AppBar(
+              title: Text(settingsService.getText('my_pets', 'My Pets')),
+              backgroundColor: Colors.green,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: () async {
+                    await authService.signOut();
+                    if (context.mounted) {
+                      Navigator.of(context).pushReplacementNamed('/auth');
+                    }
+                  },
+                  tooltip: settingsService.getText('sign_out', 'Sign Out'),
+                ),
+              ],
+            )
+          : AppBar(
+              title: Text(settingsService.getText('my_pets', 'My Pets')),
+              backgroundColor: Colors.green,
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: () async {
+                    await authService.signOut();
+                    if (context.mounted) {
+                      Navigator.of(context).pushReplacementNamed('/auth');
+                    }
+                  },
+                  tooltip: settingsService.getText('sign_out', 'Sign Out'),
+                ),
+              ],
+            ),
       body: StreamBuilder<List<Pet>>(
         stream: petService.getPets(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                '${settingsService.getText('error_occurred', 'An error occurred')}: ${snapshot.error}',
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 80, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(
+                    '${settingsService.getText('error_occurred', 'An error occurred')}: ${snapshot.error}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      // 画面を再読み込み
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => PetListScreen(
+                            showAppBar: showAppBar,
+                          ),
+                        ),
+                      );
+                    },
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    child: Text(settingsService.getText('retry', 'Retry')),
+                  ),
+                ],
               ),
             );
           }
@@ -116,8 +146,8 @@ class PetListScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.pets, size: 80, color: Colors.grey),
-                  SizedBox(height: 16),
+                  const Icon(Icons.pets, size: 80, color: Colors.grey),
+                  const SizedBox(height: 16),
                   Text(
                     settingsService.getText(
                       'no_pets_registered',
@@ -125,15 +155,15 @@ class PetListScreen extends StatelessWidget {
                     ),
                     style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   ElevatedButton.icon(
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     label: Text(
                       settingsService.getText('register_pet', 'Register a pet'),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
                       ),
@@ -146,7 +176,7 @@ class PetListScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: pets.length,
             itemBuilder: (context, index) {
               final pet = pets[index];
@@ -159,7 +189,7 @@ class PetListScreen extends StatelessWidget {
         backgroundColor: Colors.green,
         tooltip: settingsService.getText('add_pet', 'Add pet'),
         onPressed: () => _navigateToPetForm(context),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -172,7 +202,7 @@ class PetListScreen extends StatelessWidget {
     SettingsService settingsService,
   ) {
     return Card(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
@@ -183,36 +213,23 @@ class PetListScreen extends StatelessWidget {
           children: [
             // Pet image
             ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-              child:
-                  pet.imageUrl != null
-                      ? Image.network(
-                        pet.imageUrl!,
-                        height: 180,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 180,
-                            color: Colors.grey[200],
-                            child: Icon(
-                              Icons.pets,
-                              size: 64,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      )
-                      : Container(
-                        height: 180,
-                        color: Colors.grey[200],
-                        child: Icon(Icons.pets, size: 64, color: Colors.grey),
-                      ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+              child: pet.imageUrl != null
+                  ? Image.network(
+                      pet.imageUrl!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildDefaultPetImage();
+                      },
+                    )
+                  : _buildDefaultPetImage(),
             ),
-
             // Pet info
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -222,105 +239,48 @@ class PetListScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           pet.name,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getGenderColor(pet.gender).withAlpha(51),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          Pet.getGenderText(
-                            pet.gender,
-                            isJapanese:
-                                settingsService.currentLanguage ==
-                                AppLanguage.japanese,
-                          ),
-                          style: TextStyle(
-                            color: _getGenderColor(pet.gender),
+                          style: const TextStyle(
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
+                      _buildShareIndicator(pet),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    '${Pet.getCategoryText(pet.category, isJapanese: settingsService.currentLanguage == AppLanguage.japanese)} (${pet.breed})',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    pet.breed,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      _buildPetInfo(
+                        icon: Icons.category,
+                        text: _getCategoryText(pet.category, settingsService),
+                      ),
+                      const SizedBox(width: 16),
+                      _buildPetInfo(
+                        icon: pet.gender == Gender.male
+                            ? Icons.male
+                            : pet.gender == Gender.female
+                                ? Icons.female
+                                : Icons.help_outline,
+                        text: _getGenderText(pet.gender, settingsService),
+                      ),
+                    ],
                   ),
                   if (pet.birthday != null) ...[
-                    SizedBox(height: 4),
-                    Text(
-                      '${settingsService.getText('birthday', 'Birthday')}: ${DateFormat('yyyy年MM月dd日').format(pet.birthday!)}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '${settingsService.getText('age', 'Age')}: ${_calculateAge(pet.birthday!)}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    const SizedBox(height: 8),
+                    _buildPetInfo(
+                      icon: Icons.cake,
+                      text: DateFormat('yyyy/MM/dd').format(pet.birthday!),
                     ),
                   ],
-                  SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Dashboard button
-                      TextButton.icon(
-                        icon: Icon(
-                          Icons.dashboard,
-                          size: 18,
-                          color: Colors.blue,
-                        ),
-                        label: Text(
-                          settingsService.getText('dashboard', 'Dashboard'),
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                        onPressed: () => _navigateToDashboard(context, pet),
-                      ),
-                      Row(
-                        children: [
-                          // Edit button
-                          TextButton.icon(
-                            icon: Icon(Icons.edit, size: 18),
-                            label: Text(
-                              settingsService.getText('edit', 'Edit'),
-                            ),
-                            onPressed:
-                                () => _navigateToPetForm(context, pet: pet),
-                          ),
-                          // Delete button
-                          TextButton.icon(
-                            icon: Icon(
-                              Icons.delete,
-                              size: 18,
-                              color: Colors.red,
-                            ),
-                            label: Text(
-                              settingsService.getText('delete', 'Delete'),
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            onPressed:
-                                () => _confirmDeletePet(
-                                  context,
-                                  pet,
-                                  petService,
-                                  settingsService,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -330,176 +290,116 @@ class PetListScreen extends StatelessWidget {
     );
   }
 
-  // Get gender indicator color
-  Color _getGenderColor(Gender gender) {
+  // Default pet image
+  Widget _buildDefaultPetImage() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: Colors.grey[300],
+      child: const Icon(
+        Icons.pets,
+        size: 60,
+        color: Colors.grey,
+      ),
+    );
+  }
+
+  // Share indicator
+  Widget _buildShareIndicator(Pet pet) {
+    // userPermissionがnullでない場合のみ共有インジケーターを表示
+    if (pet.userPermission != null &&
+        pet.userPermission != SharePermission.owner) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.blue[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.share, size: 16, color: Colors.blue[700]),
+            const SizedBox(width: 4),
+            Text(
+              'Shared',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.blue[700],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  // Pet info row
+  Widget _buildPetInfo({required IconData icon, required String text}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: Colors.grey[600]),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Category text
+  String _getCategoryText(Category category, SettingsService settingsService) {
+    switch (category) {
+      case Category.snake:
+        return settingsService.getText('snake', 'Snake');
+      case Category.lizard:
+        return settingsService.getText('lizard', 'Lizard');
+      case Category.gecko:
+        return settingsService.getText('gecko', 'Gecko');
+      case Category.turtle:
+        return settingsService.getText('turtle', 'Turtle');
+      case Category.chameleon:
+        return settingsService.getText('chameleon', 'Chameleon');
+      case Category.crocodile:
+        return settingsService.getText('crocodile', 'Crocodile');
+      case Category.other:
+        return settingsService.getText('other', 'Other');
+    }
+  }
+
+  // Gender text
+  String _getGenderText(Gender gender, SettingsService settingsService) {
     switch (gender) {
       case Gender.male:
-        return Colors.blue;
+        return settingsService.getText('male', 'Male');
       case Gender.female:
-        return Colors.pink;
+        return settingsService.getText('female', 'Female');
       case Gender.unknown:
-        return Colors.grey;
+        return settingsService.getText('unknown', 'Unknown');
     }
-  }
-
-  // Calculate age from birthday
-  String _calculateAge(DateTime birthday) {
-    final now = DateTime.now();
-    int years = now.year - birthday.year;
-    int months = now.month - birthday.month;
-
-    // Adjust years if birth month hasn't occurred yet this year
-    if (months < 0 || (months == 0 && now.day < birthday.day)) {
-      years--;
-      months += 12;
-    }
-
-    // Adjust months if birth day hasn't occurred yet this month
-    if (now.day < birthday.day) {
-      months--;
-      if (months < 0) {
-        months += 12;
-        years--;
-      }
-    }
-
-    if (years > 0) {
-      return '$years歳${months > 0 ? ' $months ヶ月' : ''}';
-    } else {
-      return '$months ヶ月';
-    }
-  }
-
-  // Navigate to pet form
-  void _navigateToPetForm(BuildContext context, {Pet? pet}) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => PetFormScreen(pet: pet)));
   }
 
   // Navigate to pet detail
   void _navigateToPetDetail(BuildContext context, Pet pet) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => PetDetailScreen(pet: pet)));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PetDetailScreen(pet: pet),
+      ),
+    );
   }
 
-  // Navigate to dashboard
-  void _navigateToDashboard(BuildContext context, Pet pet) {
-    // Try to find the MainNavigationScreen ancestor
-    final mainNavState =
-        context.findAncestorStateOfType<MainNavigationScreenState>();
-    if (mainNavState != null) {
-      // If we're already in the main navigation, switch to dashboard tab
-      mainNavState.changeTab(1); // Switch to dashboard tab
-    } else {
-      // Fallback: Navigate to main navigation with dashboard tab and selected pet
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder:
-              (context) =>
-                  MainNavigationScreen(initialIndex: 1, initialPet: pet),
-        ),
-      );
-    }
-  }
-
-  // Confirm pet deletion
-  void _confirmDeletePet(
-    BuildContext context,
-    Pet pet,
-    PetService petService,
-    SettingsService settingsService,
-  ) {
-    showDialog(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: Text(settingsService.getText('delete_pet', 'Delete Pet')),
-            content: Text(
-              settingsService
-                  .getText(
-                    'delete_pet_confirmation',
-                    'Are you sure you want to delete ${pet.name}? This action cannot be undone.',
-                  )
-                  .replaceAll('\${pet.name}', pet.name),
-            ),
-            actions: [
-              TextButton(
-                child: Text(settingsService.getText('cancel', 'Cancel')),
-                onPressed: () => Navigator.of(ctx).pop(),
-              ),
-              TextButton(
-                child: Text(
-                  settingsService.getText('delete', 'Delete'),
-                  style: TextStyle(color: Colors.red),
-                ),
-                onPressed: () async {
-                  final dialogContext = ctx;
-                  Navigator.of(dialogContext).pop();
-
-                  // Show loading indicator
-                  if (context.mounted) {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder:
-                          (loadingContext) =>
-                              Center(child: CircularProgressIndicator()),
-                    );
-                  }
-
-                  try {
-                    final success = await petService.deletePet(pet.id!);
-
-                    if (!context.mounted) return;
-
-                    // Close loading dialog
-                    Navigator.of(context).pop();
-
-                    if (success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            settingsService
-                                .getText(
-                                  'pet_deleted_successfully',
-                                  '${pet.name} has been deleted',
-                                )
-                                .replaceAll('\${pet.name}', pet.name),
-                          ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            settingsService.getText(
-                              'delete_error',
-                              'An error occurred while deleting',
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (!context.mounted) return;
-
-                    // Close loading dialog
-                    Navigator.of(context).pop();
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '${settingsService.getText('error', 'Error')}: $e',
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
+  // Navigate to pet form
+  void _navigateToPetForm(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PetFormScreen(),
+      ),
     );
   }
 }
