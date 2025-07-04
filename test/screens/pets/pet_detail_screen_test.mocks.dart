@@ -4,20 +4,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
-import 'dart:io' as _i6;
-import 'dart:ui' as _i8;
+import 'dart:ui' as _i6;
 
 import 'package:firebase_auth/firebase_auth.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
-import 'package:reptitrack_app/models/care_record.dart' as _i12;
-import 'package:reptitrack_app/models/pet.dart' as _i5;
-import 'package:reptitrack_app/models/weight_record.dart' as _i14;
-import 'package:reptitrack_app/services/auth_service.dart' as _i9;
-import 'package:reptitrack_app/services/care_record_service.dart' as _i11;
-import 'package:reptitrack_app/services/pet_service.dart' as _i3;
-import 'package:reptitrack_app/services/settings_service.dart' as _i10;
-import 'package:reptitrack_app/services/weight_record_service.dart' as _i13;
+import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:reptitrack_app/models/care_record.dart' as _i9;
+import 'package:reptitrack_app/models/weight_record.dart' as _i11;
+import 'package:reptitrack_app/services/auth_service.dart' as _i3;
+import 'package:reptitrack_app/services/care_record_service.dart' as _i8;
+import 'package:reptitrack_app/services/settings_service.dart' as _i7;
+import 'package:reptitrack_app/services/weight_record_service.dart' as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -95,176 +92,10 @@ class _FakeUser_5 extends _i1.SmartFake implements _i2.User {
         );
 }
 
-/// A class which mocks [PetService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockPetService extends _i1.Mock implements _i3.PetService {
-  MockPetService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  _i4.Stream<List<_i5.Pet>> getPets() => (super.noSuchMethod(
-        Invocation.method(
-          #getPets,
-          [],
-        ),
-        returnValue: _i4.Stream<List<_i5.Pet>>.empty(),
-      ) as _i4.Stream<List<_i5.Pet>>);
-
-  @override
-  _i4.Stream<List<_i5.Pet>> getAllPets() => (super.noSuchMethod(
-        Invocation.method(
-          #getAllPets,
-          [],
-        ),
-        returnValue: _i4.Stream<List<_i5.Pet>>.empty(),
-      ) as _i4.Stream<List<_i5.Pet>>);
-
-  @override
-  _i4.Stream<List<_i5.Pet>> getOwnPets() => (super.noSuchMethod(
-        Invocation.method(
-          #getOwnPets,
-          [],
-        ),
-        returnValue: _i4.Stream<List<_i5.Pet>>.empty(),
-      ) as _i4.Stream<List<_i5.Pet>>);
-
-  @override
-  _i4.Stream<List<_i5.Pet>> getSharedPets() => (super.noSuchMethod(
-        Invocation.method(
-          #getSharedPets,
-          [],
-        ),
-        returnValue: _i4.Stream<List<_i5.Pet>>.empty(),
-      ) as _i4.Stream<List<_i5.Pet>>);
-
-  @override
-  _i4.Future<_i5.Pet?> getPet(
-    String? petId, {
-    String? ownerId,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getPet,
-          [petId],
-          {#ownerId: ownerId},
-        ),
-        returnValue: _i4.Future<_i5.Pet?>.value(),
-      ) as _i4.Future<_i5.Pet?>);
-
-  @override
-  _i4.Future<String> addPet(
-    _i5.Pet? pet, {
-    _i6.File? imageFile,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addPet,
-          [pet],
-          {#imageFile: imageFile},
-        ),
-        returnValue: _i4.Future<String>.value(_i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #addPet,
-            [pet],
-            {#imageFile: imageFile},
-          ),
-        )),
-      ) as _i4.Future<String>);
-
-  @override
-  _i4.Future<void> updatePet(
-    _i5.Pet? pet, {
-    _i6.File? imageFile,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updatePet,
-          [pet],
-          {#imageFile: imageFile},
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-
-  @override
-  _i4.Future<bool> deletePet(String? petId) => (super.noSuchMethod(
-        Invocation.method(
-          #deletePet,
-          [petId],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-
-  @override
-  _i4.Future<List<String>> getBreedSuggestions(String? category) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getBreedSuggestions,
-          [category],
-        ),
-        returnValue: _i4.Future<List<String>>.value(<String>[]),
-      ) as _i4.Future<List<String>>);
-
-  @override
-  _i4.Future<Map<String, dynamic>> getPetStatistics() => (super.noSuchMethod(
-        Invocation.method(
-          #getPetStatistics,
-          [],
-        ),
-        returnValue:
-            _i4.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
-      ) as _i4.Future<Map<String, dynamic>>);
-
-  @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-}
-
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i9.AuthService {
+class MockAuthService extends _i1.Mock implements _i3.AuthService {
   MockAuthService() {
     _i1.throwOnMissingStub(this);
   }
@@ -383,7 +214,7 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
           #getFirebaseErrorMessage,
           [e],
         ),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #getFirebaseErrorMessage,
@@ -442,7 +273,7 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
       ) as _i4.Future<void>);
 
   @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -451,7 +282,7 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
       );
 
   @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -516,7 +347,7 @@ class MockUser extends _i1.Mock implements _i2.User {
   @override
   String get uid => (super.noSuchMethod(
         Invocation.getter(#uid),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#uid),
         ),
@@ -845,21 +676,21 @@ class MockUser extends _i1.Mock implements _i2.User {
 /// A class which mocks [SettingsService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
+class MockSettingsService extends _i1.Mock implements _i7.SettingsService {
   MockSettingsService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i10.AppLanguage get currentLanguage => (super.noSuchMethod(
+  _i7.AppLanguage get currentLanguage => (super.noSuchMethod(
         Invocation.getter(#currentLanguage),
-        returnValue: _i10.AppLanguage.japanese,
-      ) as _i10.AppLanguage);
+        returnValue: _i7.AppLanguage.japanese,
+      ) as _i7.AppLanguage);
 
   @override
   String get currentLanguageCode => (super.noSuchMethod(
         Invocation.getter(#currentLanguageCode),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#currentLanguageCode),
         ),
@@ -877,7 +708,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
           #getCurrentLanguageDisplay,
           [],
         ),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #getCurrentLanguageDisplay,
@@ -887,7 +718,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
       ) as String);
 
   @override
-  _i4.Future<void> setLanguage(_i10.AppLanguage? language) =>
+  _i4.Future<void> setLanguage(_i7.AppLanguage? language) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLanguage,
@@ -910,7 +741,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
             fallback,
           ],
         ),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #getText,
@@ -939,7 +770,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
             value,
           ],
         ),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.method(
             #getTextWithPlaceholder,
@@ -954,7 +785,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
       ) as String);
 
   @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #addListener,
           [listener],
@@ -963,7 +794,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
       );
 
   @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
         Invocation.method(
           #removeListener,
           [listener],
@@ -993,7 +824,7 @@ class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
 /// A class which mocks [CareRecordService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
+class MockCareRecordService extends _i1.Mock implements _i8.CareRecordService {
   MockCareRecordService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1001,7 +832,7 @@ class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
   @override
   String get userId => (super.noSuchMethod(
         Invocation.getter(#userId),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#userId),
         ),
@@ -1010,34 +841,33 @@ class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
   @override
   String get petId => (super.noSuchMethod(
         Invocation.getter(#petId),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#petId),
         ),
       ) as String);
 
   @override
-  _i4.Stream<List<_i12.CareRecord>> getCareRecords() => (super.noSuchMethod(
+  _i4.Stream<List<_i9.CareRecord>> getCareRecords() => (super.noSuchMethod(
         Invocation.method(
           #getCareRecords,
           [],
         ),
-        returnValue: _i4.Stream<List<_i12.CareRecord>>.empty(),
-      ) as _i4.Stream<List<_i12.CareRecord>>);
+        returnValue: _i4.Stream<List<_i9.CareRecord>>.empty(),
+      ) as _i4.Stream<List<_i9.CareRecord>>);
 
   @override
-  _i4.Future<List<_i12.CareRecord>> getCareRecordsForDate(DateTime? date) =>
+  _i4.Future<List<_i9.CareRecord>> getCareRecordsForDate(DateTime? date) =>
       (super.noSuchMethod(
         Invocation.method(
           #getCareRecordsForDate,
           [date],
         ),
-        returnValue:
-            _i4.Future<List<_i12.CareRecord>>.value(<_i12.CareRecord>[]),
-      ) as _i4.Future<List<_i12.CareRecord>>);
+        returnValue: _i4.Future<List<_i9.CareRecord>>.value(<_i9.CareRecord>[]),
+      ) as _i4.Future<List<_i9.CareRecord>>);
 
   @override
-  _i4.Future<Map<DateTime, List<_i12.CareRecord>>> getCareRecordsForRange(
+  _i4.Future<Map<DateTime, List<_i9.CareRecord>>> getCareRecordsForRange(
     DateTime? startDate,
     DateTime? endDate,
   ) =>
@@ -1049,22 +879,22 @@ class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
             endDate,
           ],
         ),
-        returnValue: _i4.Future<Map<DateTime, List<_i12.CareRecord>>>.value(
-            <DateTime, List<_i12.CareRecord>>{}),
-      ) as _i4.Future<Map<DateTime, List<_i12.CareRecord>>>);
+        returnValue: _i4.Future<Map<DateTime, List<_i9.CareRecord>>>.value(
+            <DateTime, List<_i9.CareRecord>>{}),
+      ) as _i4.Future<Map<DateTime, List<_i9.CareRecord>>>);
 
   @override
-  _i4.Future<_i12.CareRecord?> getCareRecord(String? recordId) =>
+  _i4.Future<_i9.CareRecord?> getCareRecord(String? recordId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getCareRecord,
           [recordId],
         ),
-        returnValue: _i4.Future<_i12.CareRecord?>.value(),
-      ) as _i4.Future<_i12.CareRecord?>);
+        returnValue: _i4.Future<_i9.CareRecord?>.value(),
+      ) as _i4.Future<_i9.CareRecord?>);
 
   @override
-  _i4.Future<String?> addCareRecord(_i12.CareRecord? record) =>
+  _i4.Future<String?> addCareRecord(_i9.CareRecord? record) =>
       (super.noSuchMethod(
         Invocation.method(
           #addCareRecord,
@@ -1074,7 +904,7 @@ class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
       ) as _i4.Future<String?>);
 
   @override
-  _i4.Future<bool> updateCareRecord(_i12.CareRecord? record) =>
+  _i4.Future<bool> updateCareRecord(_i9.CareRecord? record) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateCareRecord,
@@ -1097,7 +927,7 @@ class MockCareRecordService extends _i1.Mock implements _i11.CareRecordService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWeightRecordService extends _i1.Mock
-    implements _i13.WeightRecordService {
+    implements _i10.WeightRecordService {
   MockWeightRecordService() {
     _i1.throwOnMissingStub(this);
   }
@@ -1105,7 +935,7 @@ class MockWeightRecordService extends _i1.Mock
   @override
   String get userId => (super.noSuchMethod(
         Invocation.getter(#userId),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#userId),
         ),
@@ -1114,23 +944,23 @@ class MockWeightRecordService extends _i1.Mock
   @override
   String get petId => (super.noSuchMethod(
         Invocation.getter(#petId),
-        returnValue: _i7.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#petId),
         ),
       ) as String);
 
   @override
-  _i4.Stream<List<_i14.WeightRecord>> getWeightRecords() => (super.noSuchMethod(
+  _i4.Stream<List<_i11.WeightRecord>> getWeightRecords() => (super.noSuchMethod(
         Invocation.method(
           #getWeightRecords,
           [],
         ),
-        returnValue: _i4.Stream<List<_i14.WeightRecord>>.empty(),
-      ) as _i4.Stream<List<_i14.WeightRecord>>);
+        returnValue: _i4.Stream<List<_i11.WeightRecord>>.empty(),
+      ) as _i4.Stream<List<_i11.WeightRecord>>);
 
   @override
-  _i4.Future<List<_i14.WeightRecord>> getWeightRecordsForRange(
+  _i4.Future<List<_i11.WeightRecord>> getWeightRecordsForRange(
     DateTime? startDate,
     DateTime? endDate,
   ) =>
@@ -1143,21 +973,21 @@ class MockWeightRecordService extends _i1.Mock
           ],
         ),
         returnValue:
-            _i4.Future<List<_i14.WeightRecord>>.value(<_i14.WeightRecord>[]),
-      ) as _i4.Future<List<_i14.WeightRecord>>);
+            _i4.Future<List<_i11.WeightRecord>>.value(<_i11.WeightRecord>[]),
+      ) as _i4.Future<List<_i11.WeightRecord>>);
 
   @override
-  _i4.Future<_i14.WeightRecord?> getWeightRecord(String? recordId) =>
+  _i4.Future<_i11.WeightRecord?> getWeightRecord(String? recordId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getWeightRecord,
           [recordId],
         ),
-        returnValue: _i4.Future<_i14.WeightRecord?>.value(),
-      ) as _i4.Future<_i14.WeightRecord?>);
+        returnValue: _i4.Future<_i11.WeightRecord?>.value(),
+      ) as _i4.Future<_i11.WeightRecord?>);
 
   @override
-  _i4.Future<String?> addWeightRecord(_i14.WeightRecord? record) =>
+  _i4.Future<String?> addWeightRecord(_i11.WeightRecord? record) =>
       (super.noSuchMethod(
         Invocation.method(
           #addWeightRecord,
@@ -1167,7 +997,7 @@ class MockWeightRecordService extends _i1.Mock
       ) as _i4.Future<String?>);
 
   @override
-  _i4.Future<bool> updateWeightRecord(_i14.WeightRecord? record) =>
+  _i4.Future<bool> updateWeightRecord(_i11.WeightRecord? record) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateWeightRecord,
@@ -1186,11 +1016,11 @@ class MockWeightRecordService extends _i1.Mock
       ) as _i4.Future<bool>);
 
   @override
-  _i4.Future<_i14.WeightRecord?> getLatestWeightRecord() => (super.noSuchMethod(
+  _i4.Future<_i11.WeightRecord?> getLatestWeightRecord() => (super.noSuchMethod(
         Invocation.method(
           #getLatestWeightRecord,
           [],
         ),
-        returnValue: _i4.Future<_i14.WeightRecord?>.value(),
-      ) as _i4.Future<_i14.WeightRecord?>);
+        returnValue: _i4.Future<_i11.WeightRecord?>.value(),
+      ) as _i4.Future<_i11.WeightRecord?>);
 }

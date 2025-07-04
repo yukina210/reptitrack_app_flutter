@@ -11,7 +11,6 @@ import 'package:reptitrack_app/screens/pets/pet_form_screen.dart';
 import 'package:reptitrack_app/models/pet.dart';
 import 'package:reptitrack_app/models/care_record.dart';
 import 'package:reptitrack_app/models/weight_record.dart';
-import 'package:reptitrack_app/services/pet_service.dart';
 import 'package:reptitrack_app/services/auth_service.dart';
 import 'package:reptitrack_app/services/settings_service.dart';
 import 'package:reptitrack_app/services/care_record_service.dart';
@@ -20,7 +19,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 // モッククラス生成用のアノテーション
 @GenerateMocks([
-  PetService,
   AuthService,
   User,
   SettingsService,
@@ -31,7 +29,6 @@ import 'pet_detail_screen_test.mocks.dart';
 
 void main() {
   group('PetDetailScreen テスト', () {
-    late MockPetService mockPetService;
     late MockAuthService mockAuthService;
     late MockUser mockUser;
     late MockSettingsService mockSettingsService;
@@ -39,7 +36,6 @@ void main() {
     late MockWeightRecordService mockWeightRecordService;
 
     setUp(() {
-      mockPetService = MockPetService();
       mockAuthService = MockAuthService();
       mockUser = MockUser();
       mockSettingsService = MockSettingsService();
@@ -461,8 +457,8 @@ void main() {
 
     group('レスポンシブデザインテスト', () {
       testWidgets('小さな画面サイズでの表示確認', (WidgetTester tester) async {
-        tester.binding.window.physicalSizeTestValue = Size(400, 600);
-        tester.binding.window.devicePixelRatioTestValue = 1.0;
+        tester.view.physicalSize = Size(400, 600);
+        tester.view.devicePixelRatio = 1.0;
 
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
@@ -472,14 +468,14 @@ void main() {
         expect(find.byIcon(Icons.edit), findsOneWidget);
 
         addTearDown(() {
-          tester.binding.window.clearPhysicalSizeTestValue();
-          tester.binding.window.clearDevicePixelRatioTestValue();
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
         });
       });
 
       testWidgets('大きな画面サイズでの表示確認', (WidgetTester tester) async {
-        tester.binding.window.physicalSizeTestValue = Size(800, 1200);
-        tester.binding.window.devicePixelRatioTestValue = 1.0;
+        tester.view.physicalSize = Size(800, 1200);
+        tester.view.devicePixelRatio = 1.0;
 
         await tester.pumpWidget(createTestWidget());
         await tester.pumpAndSettle();
@@ -489,8 +485,8 @@ void main() {
         expect(find.byIcon(Icons.edit), findsOneWidget);
 
         addTearDown(() {
-          tester.binding.window.clearPhysicalSizeTestValue();
-          tester.binding.window.clearDevicePixelRatioTestValue();
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
         });
       });
     });
