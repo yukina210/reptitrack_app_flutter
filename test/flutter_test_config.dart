@@ -1,25 +1,97 @@
-// test/flutter_test_config.dart (推奨版)
+// test/flutter_test_config.dart (修正版)
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // テストバインディングを初期化
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase を初期化（テスト用のオプション）
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'fake-api-key',
-      appId: 'fake-app-id',
-      messagingSenderId: 'fake-sender-id',
-      projectId: 'fake-project-id',
-      storageBucket: 'fake-storage-bucket',
-    ),
-  );
+  // Firebase のモックチャンネルを設定
+  _setupFirebaseMocks();
 
   // テストを実行
   await testMain();
+}
+
+void _setupFirebaseMocks() {
+  // Firebase Core のモック設定
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.flutter.io/firebase_core'),
+    (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'Firebase#initializeCore':
+          return [
+            {
+              'name': '[DEFAULT]',
+              'options': {
+                'apiKey': 'fake-api-key',
+                'appId': 'fake-app-id',
+                'messagingSenderId': 'fake-sender-id',
+                'projectId': 'fake-project-id',
+                'storageBucket': 'fake-storage-bucket',
+              },
+              'pluginConstants': {},
+            },
+          ];
+        case 'Firebase#initializeApp':
+          return {
+            'name': methodCall.arguments?['name'] ?? '[DEFAULT]',
+            'options': methodCall.arguments?['options'] ??
+                {
+                  'apiKey': 'fake-api-key',
+                  'appId': 'fake-app-id',
+                  'messagingSenderId': 'fake-sender-id',
+                  'projectId': 'fake-project-id',
+                  'storageBucket': 'fake-storage-bucket',
+                },
+            'pluginConstants': {},
+          };
+        default:
+          return null;
+      }
+    },
+  );
+
+  // Firebase Auth のモック設定
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.flutter.io/firebase_auth'),
+    (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'Auth#registerIdTokenListener':
+        case 'Auth#registerAuthStateListener':
+          return {'id': 1, 'user': null};
+        case 'Auth#signOut':
+          return null;
+        default:
+          return null;
+      }
+    },
+  );
+
+  // Cloud Firestore のモック設定
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(
+    const MethodChannel('plugins.flutter.io/cloud_firestore'),
+    (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'Firestore#settings':
+          return null;
+        case 'Query#snapshots':
+        case 'DocumentReference#snapshots':
+          return null;
+        case 'Query#get':
+          return {
+            'documents': [],
+            'metadata': {'isFromCache': false, 'hasPendingWrites': false},
+          };
+        default:
+          return null;
+      }
+    },
+  );
 }
 
 // // test/flutter_test_config.dart

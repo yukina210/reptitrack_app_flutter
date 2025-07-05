@@ -4,19 +4,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart' as auth_mocks;
 import 'package:reptitrack_app/screens/pets/pet_list_screen.dart';
 import 'package:reptitrack_app/screens/pets/pet_form_screen.dart';
 import 'package:reptitrack_app/models/pet.dart';
 import 'package:reptitrack_app/services/pet_service.dart';
 import 'package:reptitrack_app/services/auth_service.dart';
 import 'package:reptitrack_app/services/settings_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// モッククラス生成用のアノテーション（firebase_auth_mocksとのコンフリクトを避ける）
+// モッククラス生成用のアノテーション
 @GenerateMocks([
   PetService,
   AuthService,
   SettingsService,
+  User,
 ])
 import 'pet_list_screen_test.mocks.dart';
 
@@ -24,7 +25,7 @@ void main() {
   group('PetListScreen テスト', () {
     late MockPetService mockPetService;
     late MockAuthService mockAuthService;
-    late auth_mocks.MockUser mockUser; // firebase_auth_mocksのMockUserを使用
+    late MockUser mockUser;
     late MockSettingsService mockSettingsService;
 
     // テスト用のペットデータ
@@ -68,21 +69,15 @@ void main() {
     ];
 
     setUp(() {
-      // Firebase Mocksの初期化
-      mockUser = auth_mocks.MockUser(
-        isAnonymous: false,
-        uid: 'test-user-id',
-        email: 'test@example.com',
-        displayName: 'Test User',
-      );
-
       // サービスのモック初期化
       mockPetService = MockPetService();
       mockAuthService = MockAuthService();
+      mockUser = MockUser();
       mockSettingsService = MockSettingsService();
 
-      // AuthServiceのモック設定
-      when(mockAuthService.currentUser).thenReturn(mockUser);
+      // MockUserの設定
+      when(mockUser.uid).thenReturn('test-user-id');
+      when(mockUser.email).thenReturn('test@example.com');
 
       // SettingsServiceのモック設定
       when(mockSettingsService.getText(any, any)).thenAnswer((invocation) {
@@ -135,7 +130,7 @@ void main() {
           Provider<PetService>.value(value: mockPetService),
         ],
         child: MaterialApp(
-          home: PetListScreen(), // 元のコンストラクタを使用
+          home: PetListScreen(),
         ),
       );
     }
