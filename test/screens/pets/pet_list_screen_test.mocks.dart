@@ -474,6 +474,154 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
       );
 }
 
+/// A class which mocks [SettingsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
+  MockSettingsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i10.AppLanguage get currentLanguage => (super.noSuchMethod(
+        Invocation.getter(#currentLanguage),
+        returnValue: _i10.AppLanguage.japanese,
+      ) as _i10.AppLanguage);
+
+  @override
+  String get currentLanguageCode => (super.noSuchMethod(
+        Invocation.getter(#currentLanguageCode),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.getter(#currentLanguageCode),
+        ),
+      ) as String);
+
+  @override
+  bool get hasListeners => (super.noSuchMethod(
+        Invocation.getter(#hasListeners),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  String getCurrentLanguageDisplay() => (super.noSuchMethod(
+        Invocation.method(
+          #getCurrentLanguageDisplay,
+          [],
+        ),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getCurrentLanguageDisplay,
+            [],
+          ),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<void> setLanguage(_i10.AppLanguage? language) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLanguage,
+          [language],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  String getText(
+    String? key,
+    String? fallback,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getText,
+          [
+            key,
+            fallback,
+          ],
+        ),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getText,
+            [
+              key,
+              fallback,
+            ],
+          ),
+        ),
+      ) as String);
+
+  @override
+  String getTextWithPlaceholder(
+    String? key,
+    String? fallback,
+    String? placeholder,
+    String? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getTextWithPlaceholder,
+          [
+            key,
+            fallback,
+            placeholder,
+            value,
+          ],
+        ),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getTextWithPlaceholder,
+            [
+              key,
+              fallback,
+              placeholder,
+              value,
+            ],
+          ),
+        ),
+      ) as String);
+
+  @override
+  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [User].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -836,152 +984,4 @@ class MockUser extends _i1.Mock implements _i2.User {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
-}
-
-/// A class which mocks [SettingsService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockSettingsService extends _i1.Mock implements _i10.SettingsService {
-  MockSettingsService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i10.AppLanguage get currentLanguage => (super.noSuchMethod(
-        Invocation.getter(#currentLanguage),
-        returnValue: _i10.AppLanguage.japanese,
-      ) as _i10.AppLanguage);
-
-  @override
-  String get currentLanguageCode => (super.noSuchMethod(
-        Invocation.getter(#currentLanguageCode),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.getter(#currentLanguageCode),
-        ),
-      ) as String);
-
-  @override
-  bool get hasListeners => (super.noSuchMethod(
-        Invocation.getter(#hasListeners),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  String getCurrentLanguageDisplay() => (super.noSuchMethod(
-        Invocation.method(
-          #getCurrentLanguageDisplay,
-          [],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getCurrentLanguageDisplay,
-            [],
-          ),
-        ),
-      ) as String);
-
-  @override
-  _i4.Future<void> setLanguage(_i10.AppLanguage? language) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setLanguage,
-          [language],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-
-  @override
-  String getText(
-    String? key,
-    String? fallback,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getText,
-          [
-            key,
-            fallback,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getText,
-            [
-              key,
-              fallback,
-            ],
-          ),
-        ),
-      ) as String);
-
-  @override
-  String getTextWithPlaceholder(
-    String? key,
-    String? fallback,
-    String? placeholder,
-    String? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getTextWithPlaceholder,
-          [
-            key,
-            fallback,
-            placeholder,
-            value,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getTextWithPlaceholder,
-            [
-              key,
-              fallback,
-              placeholder,
-              value,
-            ],
-          ),
-        ),
-      ) as String);
-
-  @override
-  void addListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #addListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void removeListener(_i8.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(
-          #removeListener,
-          [listener],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void dispose() => super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void notifyListeners() => super.noSuchMethod(
-        Invocation.method(
-          #notifyListeners,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
 }
