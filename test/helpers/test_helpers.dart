@@ -206,4 +206,72 @@ class TestActions {
     await tester.tap(updateButton);
     await tester.pumpAndSettle();
   }
+
+  /// 時間を選択（簡略化）
+  static Future<void> selectTime(
+    WidgetTester tester,
+    TimeOfDay time,
+  ) async {
+    final timeButton = find.byIcon(Icons.access_time);
+    await tester.tap(timeButton);
+    await tester.pumpAndSettle();
+
+    // OKボタンをタップ（実際の時間選択は簡略化）
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  }
+
+  /// 日付を選択（簡略化）
+  static Future<void> selectDate(
+    WidgetTester tester,
+    DateTime date,
+  ) async {
+    final dateButton = find.byIcon(Icons.calendar_today);
+    await tester.tap(dateButton);
+    await tester.pumpAndSettle();
+
+    // OKボタンをタップ（実際の日付選択は簡略化）
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  }
+
+  /// 完全なケア記録を入力
+  static Future<void> fillCompleteRecord(WidgetTester tester) async {
+    // 食事情報
+    await selectFoodStatus(tester, FoodStatus.completed);
+
+    // エサの種類を入力（最初のTextFormFieldを使用）
+    final textFields = find.byType(TextFormField);
+    if (textFields.evaluate().isNotEmpty) {
+      await tester.enterText(textFields.first, 'コオロギ');
+      await tester.pumpAndSettle();
+    }
+
+    // お世話項目
+    await toggleCheckbox(tester, '排泄');
+    await toggleCheckbox(tester, '温浴');
+
+    // 交配
+    final matingSuccessRadio = find.ancestor(
+      of: find.text('成功'),
+      matching: find.byType(RadioListTile<MatingStatus>),
+    );
+    if (matingSuccessRadio.evaluate().isNotEmpty) {
+      await tester.tap(matingSuccessRadio);
+      await tester.pumpAndSettle();
+    }
+  }
+
+  /// 削除確認ダイアログで削除を実行
+  static Future<void> confirmDelete(WidgetTester tester) async {
+    // 削除ボタンをタップ
+    final deleteButton = find.byIcon(Icons.delete);
+    await tester.tap(deleteButton);
+    await tester.pumpAndSettle();
+
+    // 確認ダイアログで削除を実行
+    final confirmButton = find.text('削除する');
+    await tester.tap(confirmButton);
+    await tester.pumpAndSettle();
+  }
 }
